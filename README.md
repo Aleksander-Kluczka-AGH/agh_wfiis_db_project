@@ -1,0 +1,1 @@
+# sfml_project_template
