@@ -22,6 +22,8 @@ set(IMGUI_DIR "${PROJECT_SOURCE_DIR}/lib/imgui/imgui")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lib/imgui-sfml")
 
 
+file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+
 add_executable(${EXECUTABLE_NAME})
 
 target_compile_options(${EXECUTABLE_NAME}
@@ -35,7 +37,9 @@ target_compile_features(${EXECUTABLE_NAME}
         "cxx_std_20")
 
 target_sources(${EXECUTABLE_NAME}
-    PRIVATE main.cpp)
+    PRIVATE
+        ${SOURCES}
+        "main.cpp")
 
 target_include_directories(${EXECUTABLE_NAME}
     PRIVATE "${PROJECT_SOURCE_DIR}/include")
