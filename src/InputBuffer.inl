@@ -62,6 +62,18 @@ char& InputBuffer<SIZE>::operator[](const std::size_t& index)
 }
 
 template <std::size_t SIZE>
+const std::size_t& InputBuffer<SIZE>::size() const
+{
+    return m_size;
+}
+
+template <std::size_t SIZE>
+const std::size_t& InputBuffer<SIZE>::length() const
+{
+    return static_cast<std::string_view>(*this).length();
+}
+
+template <std::size_t SIZE>
 int InputBuffer<SIZE>::toInt() const
 {
     return std::atoi(m_buffer);
