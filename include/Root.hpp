@@ -10,4 +10,5 @@
 #include <string_view>
 #include <concepts>
 #include <exception>
+#include <cstring>
 #include <iostream>  // DEBUG
