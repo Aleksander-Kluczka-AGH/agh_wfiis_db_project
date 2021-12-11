@@ -29,14 +29,21 @@ void Application::placeMenuSection()
 {
     if(Section sec1("Menu", sf::Vector2f(0.f, 0.f), sf::Vector2f(this->size.x/4.f, this->size.y)); sec1)
     {
+        ImGui::TextColored(sf::Color{180, 180, 255}, "MENU");
+        ImGui::Separator(); ImGui::NewLine();
+
         auto [w, h] = ImGui::GetContentRegionMax();
+        ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Ogolne");
         ImGui::Separator();
+        if(ImGui::Button("Informacje", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Info; }
+
+        ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Rejestracja");
-        if(ImGui::Button("Info", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Info; }
-        if(ImGui::Button("InWszystko", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_All; }
+        // if(ImGui::Button("InWszystko", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_All; }
         if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; }
         if(ImGui::Button("InProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Prowadzacy; }
         if(ImGui::Button("InStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Student; }
+        
         ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Odczyt");
         if(ImGui::Button("OutWszystko", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_All; }
@@ -49,7 +56,7 @@ void Application::placeMenuSection()
 
 void Application::placeFormSection()
 {
-    if(Section sec2("Formularz", sf::Vector2f(this->size.x/4.f, 0.f), sf::Vector2f(this->size.x*3.f/4.f, this->size.y)); sec2)
+    if(Section sec2("Zawartosc", sf::Vector2f(this->size.x/4.f, 0.f), sf::Vector2f(this->size.x*3.f/4.f, this->size.y)); sec2)
     {
         switch(m_activeSection)
         {
