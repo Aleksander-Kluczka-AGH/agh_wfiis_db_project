@@ -8,6 +8,8 @@ class InputBuffer
 {
     public:
     InputBuffer();
+    InputBuffer(const char* content);
+    void operator=(const char* content);
 
     const char* operator*() const;
     operator char*();
@@ -18,7 +20,7 @@ class InputBuffer
     char& operator[](const std::size_t& index);
 
     const std::size_t& size() const;  // gets the size of the buffer
-    const std::size_t& length() const;  // gets the length of the string in the buffer
+    std::size_t length() const;  // gets the length of the string in the buffer
 
     //convenience methods
     int toInt() const;

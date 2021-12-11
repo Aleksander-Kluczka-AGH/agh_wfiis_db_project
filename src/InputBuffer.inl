@@ -6,6 +6,20 @@ m_buffer("")
 { }
 
 template <std::size_t SIZE>
+InputBuffer<SIZE>::InputBuffer(const char* content)
+:
+m_size(SIZE)
+{
+    std::strncpy(m_buffer, content, m_size);
+}
+
+template <std::size_t SIZE>
+void InputBuffer<SIZE>::operator=(const char* content)
+{
+    std::strncpy(m_buffer, content, m_size);
+}
+
+template <std::size_t SIZE>
 const char* InputBuffer<SIZE>::operator*() const
 {
     return m_buffer;
@@ -68,7 +82,7 @@ const std::size_t& InputBuffer<SIZE>::size() const
 }
 
 template <std::size_t SIZE>
-const std::size_t& InputBuffer<SIZE>::length() const
+std::size_t InputBuffer<SIZE>::length() const
 {
     return static_cast<std::string_view>(*this).length();
 }
@@ -87,7 +101,9 @@ bool InputBuffer<SIZE>::toBoolean() const
     || sv.find("Yes")
     || this->toInt()
     || sv.find("true")
-    || sv.find("True"))
+    || sv.find("True")
+    || sv.find("tak")
+    || sv.find("Tak"))
     {
         return true;
     }
