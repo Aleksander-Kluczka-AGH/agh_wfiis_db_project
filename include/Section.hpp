@@ -11,7 +11,9 @@ class Section
         const ImGuiWindowFlags& flags =
             ImGuiWindowFlags_NoCollapse
             | ImGuiWindowFlags_NoMove
-            | ImGuiWindowFlags_NoResize);
+            | ImGuiWindowFlags_NoResize
+            | ImGuiWindowFlags_NoDecoration
+            | ImGuiWindowFlags_NoTitleBar);
     ~Section();
 
     operator bool() const;
