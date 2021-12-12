@@ -76,6 +76,18 @@ char& InputBuffer<SIZE>::operator[](const std::size_t& index)
 }
 
 template <std::size_t SIZE>
+char* InputBuffer<SIZE>::getBuffer()
+{
+    return m_buffer;
+}
+
+template <std::size_t SIZE>
+const char* InputBuffer<SIZE>::getBuffer() const
+{
+    return m_buffer;
+}
+
+template <std::size_t SIZE>
 const std::size_t& InputBuffer<SIZE>::size() const
 {
     return m_size;
