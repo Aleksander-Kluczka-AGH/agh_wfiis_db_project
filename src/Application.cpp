@@ -38,11 +38,14 @@ void Application::placeMenuSection()
         if(ImGui::Button("Informacje", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Info; }
 
         ImGui::NewLine(); ImGui::Separator();
-        ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Rejestracja");
-        // if(ImGui::Button("InWszystko", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_All; }
+        ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Dodawanie");
         if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; }
         if(ImGui::Button("InProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Prowadzacy; }
         if(ImGui::Button("InStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Student; }
+
+        ImGui::NewLine(); ImGui::Separator();
+        ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Rejestracje");
+        if(ImGui::Button("Student-Przedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Register_StudentPrzedmiot; }
         
         ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Odczyt");
@@ -64,6 +67,7 @@ void Application::placeFormSection()
             case ActiveSection::Input_Przedmiot: { formInputPrzedmiot(); break; }
             case ActiveSection::Input_Prowadzacy: { formInputProwadzacy(); break; }
             case ActiveSection::Input_Student: { formInputStudent(); break; }
+            case ActiveSection::Register_StudentPrzedmiot: { formRegisterStudentPrzedmiot(); break; }
             case ActiveSection::Output_All: { formOutputAll(); break; }
             case ActiveSection::Output_Przedmiot: { formOutputPrzedmiot(); break; }
             case ActiveSection::Output_Prowadzacy: { formOutputProwadzacy(); break; }

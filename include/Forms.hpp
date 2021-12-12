@@ -7,6 +7,7 @@ inline void formInputAll();
 inline void formInputPrzedmiot();
 inline void formInputProwadzacy();
 inline void formInputStudent();
+inline void formRegisterStudentPrzedmiot();
 inline void formOutputAll();
 inline void formOutputPrzedmiot();
 inline void formOutputProwadzacy();
@@ -18,6 +19,7 @@ inline void formOutputKierunek();
 #include "../src/FormInputPrzedmiot.inl"
 #include "../src/FormInputProwadzacy.inl"
 #include "../src/FormInputStudent.inl"
+#include "../src/FormRegisterStudentPrzedmiot.inl"
 #include "../src/FormOutputAll.inl"
 #include "../src/FormOutputPrzedmiot.inl"
 #include "../src/FormOutputProwadzacy.inl"
