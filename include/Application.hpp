@@ -3,6 +3,7 @@
 #include "Root.hpp"
 #include "Section.hpp"
 #include "Forms.hpp"
+#include "DataManager.hpp"
 
 class Application final
 {
@@ -30,6 +31,7 @@ class Application final
     enum ActiveSection
     {
         Info = 0,
+        Connection,
 
         Input_All,
         Input_Przedmiot,

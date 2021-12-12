@@ -35,25 +35,26 @@ void Application::placeMenuSection()
         auto [w, h] = ImGui::GetContentRegionMax();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Ogolne");
         ImGui::Separator();
-        if(ImGui::Button("Informacje", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Info; }
+        if(ImGui::Button("Informacje", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Info; DATA::should_clear = true; }
+        if(ImGui::Button("Polaczenie", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Connection; DATA::should_clear = true; }
 
         ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Dodawanie");
-        if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; }
-        if(ImGui::Button("InProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Prowadzacy; }
-        if(ImGui::Button("InStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Student; }
+        if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; DATA::should_clear = true; }
+        if(ImGui::Button("InProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Prowadzacy; DATA::should_clear = true; }
+        if(ImGui::Button("InStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Student; DATA::should_clear = true; }
 
         ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Rejestracje");
-        if(ImGui::Button("Student-Przedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Register_StudentPrzedmiot; }
+        if(ImGui::Button("Student-Przedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Register_StudentPrzedmiot; DATA::should_clear = true; }
         
         ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Odczyt");
-        if(ImGui::Button("OutWszystko", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_All; }
-        if(ImGui::Button("OutPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Przedmiot; }
-        if(ImGui::Button("OutProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Prowadzacy; }
-        if(ImGui::Button("OutStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Student; }
-        if(ImGui::Button("OutKierunek", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Kierunek; }
+        if(ImGui::Button("OutWszystko", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_All; DATA::should_clear = true; }
+        if(ImGui::Button("OutPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Przedmiot; DATA::should_clear = true; }
+        if(ImGui::Button("OutProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Prowadzacy; DATA::should_clear = true; }
+        if(ImGui::Button("OutStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Student; DATA::should_clear = true; }
+        if(ImGui::Button("OutKierunek", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Kierunek; DATA::should_clear = true; }
     }
 }
 
@@ -63,6 +64,7 @@ void Application::placeFormSection()
     {
         switch(m_activeSection)
         {
+            case ActiveSection::Connection: { formConnection(); break; }
             case ActiveSection::Input_All: { formInputAll(); break; }
             case ActiveSection::Input_Przedmiot: { formInputPrzedmiot(); break; }
             case ActiveSection::Input_Prowadzacy: { formInputProwadzacy(); break; }
@@ -102,6 +104,7 @@ void Application::update()
     
     ImGui::SFML::Update(m_window, m_clock.restart());
 
+    if(DATA::should_clear) { DATA::CLEAR(); }
     this->placeMenuSection();
     this->placeFormSection();
     

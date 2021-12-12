@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Root.hpp"
+#include "DataManager.hpp"
+#include "InputBuffer.hpp"
 
 inline void formInfo();
+inline void formConnection();
 inline void formInputAll();
 inline void formInputPrzedmiot();
 inline void formInputProwadzacy();
@@ -15,6 +18,7 @@ inline void formOutputStudent();
 inline void formOutputKierunek();
 
 #include "../src/FormInfo.inl"
+#include "../src/FormConnection.inl"
 #include "../src/FormInputAll.inl"
 #include "../src/FormInputPrzedmiot.inl"
 #include "../src/FormInputProwadzacy.inl"
