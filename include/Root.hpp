@@ -7,6 +7,8 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 
+#include <pqxx/pqxx>
+
 #include <string_view>
 #include <concepts>
 #include <exception>

@@ -4,9 +4,9 @@ set(EXECUTABLE_NAME "main")
 project(DB_PROJECT)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 # SFML
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(SFML_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(SFML_BUILD_DOC OFF CACHE BOOL "" FORCE)
 set(SFML_USE_STATIC_LIBS ON CACHE BOOL "" FORCE)
@@ -20,6 +20,12 @@ add_subdirectory("${PROJECT_SOURCE_DIR}/lib/imgui")
 set(IMGUI_SFML_FIND_SFML OFF)
 set(IMGUI_DIR "${PROJECT_SOURCE_DIR}/lib/imgui/imgui")
 add_subdirectory("${PROJECT_SOURCE_DIR}/lib/imgui-sfml")
+
+# libpqxx
+set(SKIP_BUILD_TEST ON CACHE BOOL "" FORCE)
+set(BUILD_DOC OFF CACHE BOOL "" FORCE)
+set(INSTALL_TEST OFF CACHE BOOL "" FORCE)
+add_subdirectory("${PROJECT_SOURCE_DIR}/lib/libpqxx")
 
 
 file(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
@@ -49,7 +55,9 @@ target_link_libraries(${EXECUTABLE_NAME}
             sfml-window
             sfml-graphics
             IMGUI
-            ImGui-SFML)
+            ImGui-SFML
+            pq
+            pqxx)
 
 if(CMAKE_HOST_WIN32)
     target_link_libraries(${EXECUTABLE_NAME}
