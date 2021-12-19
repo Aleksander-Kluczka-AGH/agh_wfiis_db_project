@@ -1,3 +1,5 @@
+#include "../include/Forms.hpp"
+
 void formInputStudent()
 {
     ImGui::TextColored(sf::Color{230, 230, 140}, "NOWY STUDENT");

@@ -1,31 +1,32 @@
 #pragma once
 
+// #include "forms/FormConnection.hpp"
+// #include "forms/FormInfo.hpp"
+// #include "forms/FormInputAll.hpp"
+// // #include "forms/FormInputProwadzacy.hpp"
+// #include "forms/FormInputPrzedmiot.hpp"
+// #include "forms/FormInputStudent.hpp"
+// #include "forms/FormOutputAll.hpp"
+// #include "forms/FormOutputKierunek.hpp"
+// #include "forms/FormOutputProwadzacy.hpp"
+// #include "forms/FormOutputPrzedmiot.hpp"
+// #include "forms/FormOutputStudent.hpp"
+// #include "forms/FormRegisterStudentPrzedmiot.hpp"
+
 #include "Root.hpp"
-#include "DataManager.hpp"
 #include "InputBuffer.hpp"
+#include "DataManager.hpp"
+#include "Connection.hpp"
 
-inline void formInfo();
-inline void formConnection();
-inline void formInputAll();
-inline void formInputPrzedmiot();
-inline void formInputProwadzacy();
-inline void formInputStudent();
-inline void formRegisterStudentPrzedmiot();
-inline void formOutputAll();
-inline void formOutputPrzedmiot();
-inline void formOutputProwadzacy();
-inline void formOutputStudent();
-inline void formOutputKierunek();
-
-#include "../src/FormInfo.inl"
-#include "../src/FormConnection.inl"
-#include "../src/FormInputAll.inl"
-#include "../src/FormInputPrzedmiot.inl"
-#include "../src/FormInputProwadzacy.inl"
-#include "../src/FormInputStudent.inl"
-#include "../src/FormRegisterStudentPrzedmiot.inl"
-#include "../src/FormOutputAll.inl"
-#include "../src/FormOutputPrzedmiot.inl"
-#include "../src/FormOutputProwadzacy.inl"
-#include "../src/FormOutputStudent.inl"
-#include "../src/FormOutputKierunek.inl"
+void formConnection();
+void formInfo();
+void formInputAll();
+void formInputProwadzacy();
+void formInputPrzedmiot();
+void formInputStudent();
+void formOutputAll();
+void formOutputKierunek();
+void formOutputProwadzacy();
+void formOutputPrzedmiot();
+void formOutputStudent();
+void formRegisterStudentPrzedmiot();

@@ -1,3 +1,4 @@
+#include "../include/Forms.hpp"
 #include "../include/Util.hpp"
 
 void formInputPrzedmiot()
@@ -25,6 +26,8 @@ void formInputPrzedmiot()
 
     ImGui::InputTextMultilineWithHint("##bin_prze_opis", "Opis", DATA::buf_opis, DATA::buf_opis.size(), sf::Vector2f(0.f, 300.f));
     ImGui::SameLine(); ImGui::Text("varchar(1024)");
+
+    
 
     // TODO:
     // - Dodanie pola wybierajacego stopien studiow
