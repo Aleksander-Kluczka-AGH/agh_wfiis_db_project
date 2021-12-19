@@ -11,6 +11,7 @@ namespace DATA
     static InputBuffer<64> buf_user = "u9kluczka";
     static InputBuffer<64> buf_password = "9kluczka";
 
+    static InputBuffer<8> buf_id;
     static InputBuffer<32> buf_imie;
     static InputBuffer<32> buf_drugieimie;
     static InputBuffer<32> buf_nazwisko;
@@ -30,21 +31,38 @@ namespace DATA
     static InputBuffer<32> buf_imieojca;
     static InputBuffer<32> buf_imiematki;
 
-    static pqxx::result query_result;
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    static std::unique_ptr<pqxx::connection> connection = nullptr;
+    // static std::unique_ptr<pqxx::work> work = nullptr;
+    static pqxx::result qresult;
+    static auto is_conn = false;
+    static auto has_results = false;
+    static auto requested_results = false;
+    static auto query_failed = false;
+    static InputBuffer<256> buf_error;
+    static InputBuffer<64> buf_label;
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    static std::size_t tries = 0;
 
     static auto result = false;
     static auto clicked = false;
-    static std::exception exc;
+    static std::string exception_message;
 
     static bool should_clear = false;
     [[maybe_unused]] static void CLEAR()
     {
+        std::cout << "CLEAR()" << std::endl;
+
         // buf_host = "";
         // buf_port = "";
         // buf_dbname = "";
         // buf_user = "";
         // buf_password = "";
 
+        buf_id = "";
         buf_imie = "";
         buf_drugieimie = "";
         buf_nazwisko = "";
@@ -64,10 +82,18 @@ namespace DATA
         buf_imieojca = "";
         buf_imiematki = "";
 
-        query_result.clear();
+        connection.reset(nullptr);
+        // work->commit();
+        // work.reset();
+        qresult.clear();
+        is_conn = false;
+        has_results = false;
+        requested_results = false;
+
+        tries = 0;
         result = false;
         clicked = false;
-        exc = {};
+        exception_message.clear();
 
         should_clear = false;
     }

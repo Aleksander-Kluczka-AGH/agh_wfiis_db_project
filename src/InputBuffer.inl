@@ -124,3 +124,9 @@ bool InputBuffer<SIZE>::toBoolean() const
         return false;
     }
 }
+
+template <std::size_t SIZE>
+std::string InputBuffer<SIZE>::toString() const
+{
+    return std::string(m_buffer);
+}

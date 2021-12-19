@@ -29,6 +29,7 @@ class InputBuffer
     //convenience methods
     int toInt() const;
     bool toBoolean() const;
+    std::string toString() const;
 
     private:
     const std::size_t m_size;

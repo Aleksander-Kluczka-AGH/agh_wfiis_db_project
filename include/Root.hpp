@@ -13,4 +13,6 @@
 #include <concepts>
 #include <exception>
 #include <cstring>
+#include <memory>
+#include <sstream>
 #include <iostream>  // DEBUG
