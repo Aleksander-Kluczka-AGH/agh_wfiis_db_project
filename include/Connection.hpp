@@ -49,11 +49,14 @@ static void resetConnection()
     }
 }
 
-[[nodiscard]]
 [[maybe_unused]]
-static int chooseFromQuery(const std::string& query, const std::string& init_label = "Wybierz", const std::size_t& column_label = 0)
+static void chooseFromQuery(
+    const std::string& query,
+    const std::string& init_label = "Wybierz",
+    const std::size_t& column_label = 0,
+    const std::string& unique_id = "##Submit")
 {
-    int sel = 0;
+    int& sel = DATA::current_choice;
     if(DATA::connection && DATA::connection->is_open())
     {
         DATA::is_conn = true;
@@ -73,7 +76,8 @@ static int chooseFromQuery(const std::string& query, const std::string& init_lab
                 std::cout << e.what() << std::endl;
                 DATA::buf_error = e.what();
                 DATA::tries++;
-                return -1;
+                sel = -1;
+                return;
             }
             DATA::buf_label = init_label.c_str();
         }
@@ -82,7 +86,7 @@ static int chooseFromQuery(const std::string& query, const std::string& init_lab
         if(DATA::requested_results && !DATA::qresult.empty())
         {
             DATA::has_results = true;
-            if(ImGui::BeginCombo("##bin_prow_przedmiot", DATA::buf_label.getBuffer()))
+            if(ImGui::BeginCombo(unique_id.c_str(), DATA::buf_label.getBuffer()))
             {
                 auto iter = 1;
                 for(auto row : DATA::qresult)
@@ -114,7 +118,33 @@ static int chooseFromQuery(const std::string& query, const std::string& init_lab
         ImGui::TextWrapped("%s", DATA::exception_message.c_str());
         sel = -1;
     }
-    return sel;
+}
+
+[[maybe_unused]]
+static void submitButton(const std::string& connection, const std::string& query)
+{
+    if(ImGui::Button("Wyslij"))
+    {
+        resetConnection();
+        tryConnect(connection.c_str());
+        if(DATA::is_conn)
+        {
+            try
+            {
+                pqxx::work W{*DATA::connection};
+                auto res = W.exec0(query.c_str());
+                W.commit();
+                DATA::query_failed = false;
+            }
+            catch(const std::exception& e)
+            {
+                DATA::query_failed = true;
+                DATA::exception_message = e.what();
+                std::cout << e.what() << std::endl;
+            }
+        }
+        DATA::CLEAR();
+    }
 }
 
 // class Connection final

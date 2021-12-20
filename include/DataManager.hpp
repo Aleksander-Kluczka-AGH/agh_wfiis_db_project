@@ -42,6 +42,7 @@ namespace DATA
     static auto query_failed = false;
     static InputBuffer<256> buf_error;
     static InputBuffer<64> buf_label;
+    static int current_choice = 0;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -89,6 +90,7 @@ namespace DATA
         is_conn = false;
         has_results = false;
         requested_results = false;
+        current_choice = 0;
 
         tries = 0;
         result = false;
