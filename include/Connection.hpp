@@ -3,13 +3,18 @@
 #include "Root.hpp"
 #include "DataManager.hpp"
 
-// void tryConnect(const char* connection_string, const std::size_t count = 3);
+static void tryConnect(const char* connection_string, const std::size_t count = 3);
+static void sendQuery(const std::string& query);
+static void chooseFromQuery(const std::string& query, const std::string& init_label = "Wybierz", const std::size_t& column_label = 0, const std::string& unique_id = "##Submit");
+static void comboFromQuery(const std::size_t& column_label, const std::string& unique_id = "##Submit");
+static void submitButton(const std::string& connection, const std::string& query);
+static void tableFromQuery(const std::string& query, const std::vector<std::size_t>& columns);
 
 // this shit below is the only signature that works, it has to be static and has to be defined here
 // why? I have no clue whatsoever
 // otherwise the connection is not established correctly >:(
 [[maybe_unused]]
-static void tryConnect(const char* connection_string, const std::size_t count = 3)
+static void tryConnect(const char* connection_string, const std::size_t count)
 {
     if(!DATA::is_conn && DATA::tries < count)
     {
@@ -38,6 +43,46 @@ static void tryConnect(const char* connection_string, const std::size_t count = 
 }
 
 [[maybe_unused]]
+static void sendQuery(const std::string& query)
+{
+    int& sel = DATA::current_choice;
+    if(DATA::connection && DATA::connection->is_open())
+    {
+        DATA::is_conn = true;
+        if(!DATA::requested_results && DATA::tries < 3)
+        {
+            try
+            {
+                DATA::requested_results = true;
+                pqxx::work W{*DATA::connection};
+                auto res = W.exec(query.c_str());
+                W.commit();
+                DATA::qresult.swap(res);
+            }
+            catch(const std::exception& e)
+            {
+                std::cout << e.what() << std::endl;
+                DATA::buf_error = e.what();
+                DATA::tries++;
+                sel = -1;
+                return;
+            }
+
+            DATA::has_results = !DATA::qresult.empty();
+            // DATA::buf_label = init_label.c_str();
+        }
+    }
+    else
+    {
+        // do not show submit button if connection is not established
+        ImGui::TextColored(sf::Color::Red, "Nie udalo sie nawiazac polaczenia.");
+        ImGui::TextColored(sf::Color::Red, "Szczegoly: ");
+        ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
+        sel = -1;
+    }
+}
+
+[[maybe_unused]]
 static void resetConnection()
 {
     DATA::is_conn = false;
@@ -52,71 +97,45 @@ static void resetConnection()
 [[maybe_unused]]
 static void chooseFromQuery(
     const std::string& query,
-    const std::string& init_label = "Wybierz",
-    const std::size_t& column_label = 0,
-    const std::string& unique_id = "##Submit")
+    const std::string& init_label,
+    const std::size_t& column_label,
+    const std::string& unique_id)
 {
-    int& sel = DATA::current_choice;
-    if(DATA::connection && DATA::connection->is_open())
+    if(DATA::is_conn)
     {
-        DATA::is_conn = true;
-        if(!DATA::requested_results && DATA::tries < 3)
-        {
-            try
-            {
-                DATA::requested_results = true;
-                // DATA::work = std::make_unique<pqxx::work>(*DATA::connection);
-                pqxx::work W{*DATA::connection};
-                auto res = W.exec(query.c_str());
-                W.commit();
-                DATA::qresult.swap(res);
-            }
-            catch(const std::exception& e)
-            {
-                std::cout << e.what() << std::endl;
-                DATA::buf_error = e.what();
-                DATA::tries++;
-                sel = -1;
-                return;
-            }
-            DATA::buf_label = init_label.c_str();
-        }
-        
-        // the if below can be separated into a new function
-        if(DATA::requested_results && !DATA::qresult.empty())
-        {
-            DATA::has_results = true;
-            if(ImGui::BeginCombo(unique_id.c_str(), DATA::buf_label.getBuffer()))
-            {
-                auto iter = 1;
-                for(auto row : DATA::qresult)
-                {
-                    std::stringstream ss;
-                    for(auto col : row) { ss << col << "  "; }
+        if(!DATA::requested_results) { DATA::buf_label = init_label.c_str(); }
+        sendQuery(query);
+    }
+    comboFromQuery(column_label, unique_id);
+}
 
-                    if(ImGui::Selectable(ss.str().c_str()))  // if currently selected
-                    {
-                        DATA::buf_label = row[column_label].c_str();  // use buffer to preview current choice
-                        sel = iter;
-                    }
-                    iter++;
-                }
-                ImGui::EndCombo();
-            }
-        }
-        else
+[[maybe_unused]]
+static void comboFromQuery(const std::size_t& column_label, const std::string& unique_id)
+{
+    if(DATA::requested_results && DATA::has_results)
+    {
+        if(ImGui::BeginCombo(unique_id.c_str(), DATA::buf_label.getBuffer()))
         {
-            ImGui::TextWrapped("Nie otrzymano wynikow zwrotnych.");
-            sel = -1;
+            auto iter = 1;
+            for(auto row : DATA::qresult)
+            {
+                std::stringstream ss;
+                for(auto col : row) { ss << col << "  "; }
+
+                if(ImGui::Selectable(ss.str().c_str()))  // if currently selected
+                {
+                    DATA::buf_label = row[column_label].c_str();  // use buffer to preview current choice
+                    DATA::current_choice = iter;
+                }
+                iter++;
+            }
+            ImGui::EndCombo();
         }
     }
-    else
+    else if(!DATA::has_results)
     {
-        // do not show submit button if connection is not established
-        ImGui::TextWrapped("Nie udalo sie nawiazac polaczenia.");
-        ImGui::TextWrapped("Szczegoly: ");
-        ImGui::TextWrapped("%s", DATA::exception_message.c_str());
-        sel = -1;
+        ImGui::TextWrapped("Nie otrzymano wynikow zwrotnych.");
+        DATA::current_choice = -1;
     }
 }
 
@@ -144,5 +163,46 @@ static void submitButton(const std::string& connection, const std::string& query
             }
         }
         DATA::CLEAR();
+    }
+}
+
+[[maybe_unused]]
+static void tableFromQuery(const std::string& query, const std::vector<std::size_t>& columns)
+{
+    if(DATA::is_conn)
+    {
+        sendQuery(query);
+    }
+
+    const auto size = static_cast<std::size_t>(DATA::qresult.columns());
+    const auto count = std::count_if(columns.begin(), columns.end(), [&size](const std::size_t& el) { return (el <= size) && (el > 0); });
+
+    if(DATA::requested_results && DATA::has_results)
+    {
+        if(ImGui::BeginTable("##table", count, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg))
+        {
+            for(auto& col : columns)
+            {
+                if((col > size) || (col < 1)) { continue; }
+                ImGui::TableSetupColumn(DATA::qresult.column_name(col-1));
+            }
+            ImGui::TableHeadersRow();
+
+            for(auto row : DATA::qresult)
+            {
+                ImGui::TableNextRow();
+                for(auto& col : columns)
+                {
+                    if((col > size) || (col < 1)) { continue; }
+                    ImGui::TableNextColumn();
+                    ImGui::Text("%s", row[col-1].c_str());
+                }
+            }
+            ImGui::EndTable();
+        }
+    }
+    else if(!DATA::has_results)
+    {
+        ImGui::TextWrapped("Nie otrzymano wynikow zwrotnych.");
     }
 }

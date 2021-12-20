@@ -86,9 +86,11 @@ namespace DATA
         buf_stopien = "";
         buf_data[0] = 1u; buf_data[1] = 1u; buf_data[2] = 2000u;
 
+        if(connection && connection->is_open())
+        {
+            connection->close();
+        }
         connection.reset(nullptr);
-        // work->commit();
-        // work.reset();
         qresult.clear();
         is_conn = false;
         has_results = false;
