@@ -59,7 +59,7 @@ void formInputPrzedmiot()
     tryConnect(str.str().c_str());
     chooseFromQuery("SELECT id_kierunek, nazwa, stopien FROM prj.kierunek ORDER BY 1;", "Wybierz kierunek:", 1);
     
-    if(DATA::current_choice > 0)  // here is some problem with varchar(8) I guess
+    if(DATA::current_choice > 0)
     {
         auto ID = (DATA::qresult[DATA::current_choice-1]["id_kierunek"]).as<int>();
         ss << "INSERT INTO prj.przedmiot_kierunek (id_kierunek, skrot_nazwy, id_przedmiot) values ("

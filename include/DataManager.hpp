@@ -31,6 +31,9 @@ namespace DATA
     static InputBuffer<32> buf_imieojca;
     static InputBuffer<32> buf_imiematki;
 
+    static InputBuffer<16> buf_stopien;
+    static unsigned buf_data[3] = {1u, 1u, 2000u};
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     static std::unique_ptr<pqxx::connection> connection = nullptr;
@@ -47,9 +50,6 @@ namespace DATA
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     static std::size_t tries = 0;
-
-    static auto result = false;
-    static auto clicked = false;
     static std::string exception_message;
 
     static bool should_clear = false;
@@ -83,6 +83,9 @@ namespace DATA
         buf_imieojca = "";
         buf_imiematki = "";
 
+        buf_stopien = "";
+        buf_data[0] = 1u; buf_data[1] = 1u; buf_data[2] = 2000u;
+
         connection.reset(nullptr);
         // work->commit();
         // work.reset();
@@ -93,8 +96,6 @@ namespace DATA
         current_choice = 0;
 
         tries = 0;
-        result = false;
-        clicked = false;
         exception_message.clear();
 
         should_clear = false;
