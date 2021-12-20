@@ -146,27 +146,3 @@ static void submitButton(const std::string& connection, const std::string& query
         DATA::CLEAR();
     }
 }
-
-// class Connection final
-// {
-//     public:
-//     // "host=%s dbname=%s user=%s password=%s sslmode=allow"
-//     Connection();
-//     Connection(const std::string& host, const std::string& dbname, const std::string& user, const std::string& password, const std::string& sslmode = "allow") noexcept;
-//     ~Connection();
-
-//     void init(const std::string& host, const std::string& dbname, const std::string& user, const std::string& password, const std::string& sslmode = "allow") noexcept;
-//     void reset() noexcept;
-//     bool check() const noexcept;
-//     bool hasResults() const noexcept;
-//     bool executeQuery(const std::string& query) noexcept;
-//     const pqxx::result& getResult() const noexcept;
-
-//     private:
-//     std::string m_buffer;  // buffer for psql query
-//     pqxx::connection *m_connection;
-//     pqxx::work *m_work;
-//     pqxx::result m_result;
-// };
-
-// void getQueryResult(const std::string& query, bool debug = false);
