@@ -56,7 +56,6 @@ target_link_libraries(${EXECUTABLE_NAME}
             sfml-graphics
             IMGUI
             ImGui-SFML
-            pq
             pqxx)
 
 if(CMAKE_HOST_WIN32)
@@ -66,7 +65,9 @@ if(CMAKE_HOST_WIN32)
             ole32)
 elseif(CMAKE_HOST_UNIX)
     target_link_libraries(${EXECUTABLE_NAME}
-    PRIVATE GL)
+    PRIVATE 
+        GL
+        pq)
 else()
     message(STATUS "Unknown system")
 endif()
