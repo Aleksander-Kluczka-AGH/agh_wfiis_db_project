@@ -65,7 +65,6 @@ void Application::placeFormSection()
         switch(m_activeSection)
         {
             case ActiveSection::Connection: { formConnection(); break; }
-            case ActiveSection::Input_All: { formInputAll(); break; }
             case ActiveSection::Input_Przedmiot: { formInputPrzedmiot(); break; }
             case ActiveSection::Input_Prowadzacy: { formInputProwadzacy(); break; }
             case ActiveSection::Input_Student: { formInputStudent(); break; }

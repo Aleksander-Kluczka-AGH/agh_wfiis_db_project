@@ -33,7 +33,6 @@ class Application final
         Info = 0,
         Connection,
 
-        Input_All,
         Input_Przedmiot,
         Input_Prowadzacy,
         Input_Student,
