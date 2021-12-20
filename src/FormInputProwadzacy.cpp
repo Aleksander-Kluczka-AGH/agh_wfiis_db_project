@@ -39,13 +39,14 @@ void formInputProwadzacy()
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     tryConnect(str.str().c_str());
-    auto index = chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot;", "Wybierz przedmiot:", 1);
+    chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot EXCEPT SELECT id_przedmiot, nazwa, semestr FROM prj.prowadzacy_przedmiot JOIN prj.przedmiot USING (id_przedmiot) ORDER BY 1;", "Wybierz przedmiot:", 1);
     
-    if(index > -1)
+    if(DATA::current_choice > 0)
     {
-        std::cout << "Appending przedmiot" << std::endl;
+        // need to find ID of an item in a databse, not its position in the result table
+        auto ID = (DATA::qresult[DATA::current_choice-1]["id_przedmiot"]).as<int>();
         ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values ("
-            << index << ", "
+            << ID << ", "
             << DATA::buf_id.toInt() << ");";
     }
 
@@ -57,28 +58,7 @@ void formInputProwadzacy()
 
     if(filled)
     {
-        if(ImGui::Button("Submit"))
-        {
-            resetConnection();
-            tryConnect(str.str().c_str());
-            if(DATA::is_conn)
-            {
-                try
-                {
-                    pqxx::work W{*DATA::connection};
-                    auto res = W.exec0(ss.str().c_str());
-                    W.commit();
-                    DATA::query_failed = false;
-                }
-                catch(const std::exception& e)
-                {
-                    DATA::query_failed = true;
-                    DATA::exception_message = e.what();
-                    std::cout << e.what() << std::endl;
-                }
-            }
-            DATA::CLEAR();
-        }
+        submitButton(str.str(), ss.str());
     }
     if(DATA::query_failed)
     {
