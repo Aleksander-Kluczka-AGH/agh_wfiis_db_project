@@ -2,7 +2,7 @@
 
 void formOutputProwadzacy()
 {
-    ImGui::TextColored(sf::Color{230, 230, 140}, "LISTA KIERUNKOW");
+    ImGui::TextColored(sf::Color{230, 230, 140}, "LISTA PROWADZACYCH");
     ImGui::NewLine();
 
     std::stringstream str;
