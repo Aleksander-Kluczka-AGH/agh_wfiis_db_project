@@ -36,6 +36,7 @@ class Application final
         Input_Przedmiot,
         Input_Prowadzacy,
         Input_Student,
+        Input_Kierunek,
 
         Register_StudentPrzedmiot,
         

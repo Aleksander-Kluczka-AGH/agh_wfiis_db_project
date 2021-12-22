@@ -18,12 +18,14 @@ namespace DATA
     static InputBuffer<64> buf_email;
 
     static InputBuffer<64> buf_nazwa;
+    static InputBuffer<8> buf_skrotnazwy;
     static InputBuffer<16> buf_semestr;
     static InputBuffer<16> buf_ects;
     static InputBuffer<16> buf_miejsca;
     static bool buf_egzamin = false;
     static InputBuffer<16> buf_typ;
     static InputBuffer<1024> buf_opis;
+    static InputBuffer<16> buf_prog;  // score bar
 
     static InputBuffer<16> buf_dataurodzin;  // format: YYYY-MM-DD
     static InputBuffer<64> buf_miejscezam;
@@ -70,6 +72,7 @@ namespace DATA
         buf_email = "";
 
         buf_nazwa = "";
+        buf_skrotnazwy = "";
         buf_semestr = "";
         buf_ects = "";
         buf_miejsca = "";

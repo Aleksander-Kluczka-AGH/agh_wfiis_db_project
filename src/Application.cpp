@@ -43,6 +43,7 @@ void Application::placeMenuSection()
         if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; DATA::should_clear = true; }
         if(ImGui::Button("InProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Prowadzacy; DATA::should_clear = true; }
         if(ImGui::Button("InStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Student; DATA::should_clear = true; }
+        if(ImGui::Button("InKierunek", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Kierunek; DATA::should_clear = true; }
 
         ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Rejestracje");
@@ -69,6 +70,7 @@ void Application::placeFormSection()
             case ActiveSection::Input_Przedmiot: { formInputPrzedmiot(); break; }
             case ActiveSection::Input_Prowadzacy: { formInputProwadzacy(); break; }
             case ActiveSection::Input_Student: { formInputStudent(); break; }
+            case ActiveSection::Input_Kierunek: { formInputKierunek(); break; }
             case ActiveSection::Register_StudentPrzedmiot: { formRegisterStudentPrzedmiot(); break; }
             case ActiveSection::Output_All: { formOutputAll(); break; }
             case ActiveSection::Output_Przedmiot: { formOutputPrzedmiot(); break; }

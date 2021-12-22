@@ -7,6 +7,7 @@
 
 void formConnection();
 void formInfo();
+void formInputKierunek();
 void formInputProwadzacy();
 void formInputPrzedmiot();
 void formInputStudent();
