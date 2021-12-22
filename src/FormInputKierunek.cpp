@@ -6,7 +6,7 @@ void formInputKierunek()
     ImGui::NewLine();
 
     auto flags = ImGuiInputTextFlags_CharsNoBlank;
-    ImGui::InputTextWithHint("##bin_kier_nazwa", "Nazwa", DATA::buf_nazwa, DATA::buf_nazwa.size(), flags);
+    ImGui::InputTextWithHint("##bin_kier_nazwa", "Nazwa", DATA::buf_nazwa, DATA::buf_nazwa.size());
     ImGui::SameLine(); ImGui::Text("varchar(64)");
 
     ImGui::InputTextWithHint("##bin_kier_skrot", "Skrot nazwy", DATA::buf_skrotnazwy, DATA::buf_skrotnazwy.size(), flags);
