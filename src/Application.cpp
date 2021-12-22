@@ -55,6 +55,7 @@ void Application::placeMenuSection()
         if(ImGui::Button("OutProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Prowadzacy; DATA::should_clear = true; }
         if(ImGui::Button("OutStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Student; DATA::should_clear = true; }
         if(ImGui::Button("OutKierunek", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Kierunek; DATA::should_clear = true; }
+        if(ImGui::Button("OutWydzial", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Output_Wydzial; DATA::should_clear = true; }
     }
 }
 
@@ -74,6 +75,7 @@ void Application::placeFormSection()
             case ActiveSection::Output_Prowadzacy: { formOutputProwadzacy(); break; }
             case ActiveSection::Output_Student: { formOutputStudent(); break; }
             case ActiveSection::Output_Kierunek: { formOutputKierunek(); break; }
+            case ActiveSection::Output_Wydzial: { formOutputWydzial(); break; }
             case ActiveSection::Info:
             default: { formInfo(); break; }
         }

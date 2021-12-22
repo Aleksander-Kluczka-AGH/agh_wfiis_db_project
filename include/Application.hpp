@@ -43,6 +43,7 @@ class Application final
         Output_Przedmiot,
         Output_Prowadzacy,
         Output_Student,
-        Output_Kierunek
+        Output_Kierunek,
+        Output_Wydzial
     };
 };

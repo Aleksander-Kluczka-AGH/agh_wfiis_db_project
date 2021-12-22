@@ -15,4 +15,5 @@ void formOutputKierunek();
 void formOutputProwadzacy();
 void formOutputPrzedmiot();
 void formOutputStudent();
+void formOutputWydzial();
 void formRegisterStudentPrzedmiot();
