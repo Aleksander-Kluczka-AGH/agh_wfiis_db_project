@@ -50,33 +50,34 @@ void formInputKierunek()
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // find a faculty where the field with such id does not yet exist
-    std::stringstream query;
-    query << "SELECT wy.id_wydzial, wy.nazwa, wy.skrot_nazwy "
-        << "FROM prj.wydzial WY"
-        // << "FULL JOIN prj.wydzial_kierunek WK USING (id_wydzial)"
-        // << "WHERE wk.skrot_nazwy != " << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'')
-        << ";";
-
-    tryConnect(str.str().c_str());
-    chooseFromQuery(query.str(), "Przypisz do wydzialu:", 2);
-    
-    if(DATA::current_choice > 0)
-    {
-        // need to find ID of an item in a databse, not its position in the result table
-        auto ID = (DATA::qresult[DATA::current_choice-1]["id_wydzial"]).as<int>();
-        ss << "INSERT INTO prj.wydzial_kierunek (id_wydzial, id_kierunek, skrot_nazwy) values ("
-            << ID << ", "
-            << "(SELECT id_kierunek FROM prj.kierunek WHERE skrot_nazwy = "
-                << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << "), "
-            << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << ");";
-    }
-
     auto filled = (DATA::buf_nazwa.length() != 0
         && DATA::buf_skrotnazwy.length() != 0
         && DATA::buf_miejsca.length() != 0
         && DATA::buf_semestr.length() != 0
         && DATA::buf_stopien.length() != 0);
+    
+    // find a faculty where the field with such id does not yet exist
+    if(filled)
+    {
+        std::stringstream query;
+        query << "SELECT * FROM prj.WydzialBezKierunku ("
+            << std::quoted(DATA::buf_nazwa.getBuffer(), '\'')
+            << ");";
+
+        tryConnect(str.str().c_str());
+        chooseFromQuery(query.str(), "Przypisz do wydzialu:", 2);
+        
+        if(DATA::current_choice > 0)
+        {
+            // need to find ID of an item in a databse, not its position in the result table
+            auto ID = (DATA::qresult[DATA::current_choice-1]["id_wydzial"]).as<int>();
+            ss << "INSERT INTO prj.wydzial_kierunek (id_wydzial, id_kierunek, skrot_nazwy) values ("
+                << ID << ", "
+                << "(SELECT id_kierunek FROM prj.kierunek WHERE skrot_nazwy = "
+                    << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << "), "
+                << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << ");";
+        }
+    }
 
     if(filled)
     {
