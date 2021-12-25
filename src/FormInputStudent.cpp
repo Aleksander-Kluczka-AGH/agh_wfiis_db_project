@@ -95,7 +95,6 @@ void formInputStudent()
             << DATA::buf_id.toInt() << ", "
             << "(SELECT TO_DATE(CURRENT_TIMESTAMP::VARCHAR, 'YYYY-MM-DD')), "
             << "TO_DATE('2077-5-22', 'YYYY-MM-DD'));";
-        std::cout << query.str() << std::endl;
     }
     // SELECT TO_DATE(CURRENT_TIMESTAMP::VARCHAR, 'YYYY-MM-DD');  // wez aktualna date
 

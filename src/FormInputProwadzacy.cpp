@@ -6,9 +6,6 @@ void formInputProwadzacy()
     ImGui::NewLine();
 
     auto flags = ImGuiInputTextFlags_CharsNoBlank;
-    ImGui::InputTextWithHint("##bin_prow_id", "ID", DATA::buf_id, DATA::buf_id.size(), flags | ImGuiInputTextFlags_CharsDecimal);
-    ImGui::SameLine(); ImGui::Text("int");
-
     ImGui::InputTextWithHint("##bin_prow_imie", "Imie", DATA::buf_imie, DATA::buf_imie.size(), flags);
     ImGui::SameLine(); ImGui::Text("varchar(32)");
 
@@ -29,8 +26,7 @@ void formInputProwadzacy()
         << " password=" << DATA::buf_password;
     
     std::stringstream ss;
-    ss << "INSERT INTO prj.prowadzacy (id_prowadzacy, imie, drugie_imie, nazwisko, email) values ("
-        << DATA::buf_id.toInt() << ", "
+    ss << "INSERT INTO prj.prowadzacy (imie, drugie_imie, nazwisko, email) values ("
         << std::quoted(DATA::buf_imie.getBuffer(), '\'') << ", "
         << std::quoted(DATA::buf_drugieimie.getBuffer(), '\'') << ", "
         << std::quoted(DATA::buf_nazwisko.getBuffer(), '\'') << ", "
@@ -39,7 +35,7 @@ void formInputProwadzacy()
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     tryConnect(str.str().c_str());
-    chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot EXCEPT SELECT id_przedmiot, nazwa, semestr FROM prj.prowadzacy_przedmiot JOIN prj.przedmiot USING (id_przedmiot) ORDER BY 1;", "Wybierz przedmiot:", 1);
+    chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot EXCEPT (SELECT id_przedmiot, nazwa, semestr FROM prj.prowadzacy_przedmiot JOIN prj.przedmiot USING (id_przedmiot)) ORDER BY 1;", "Wybierz przedmiot:", 1);
     
     if(DATA::current_choice > 0)
     {
@@ -47,7 +43,12 @@ void formInputProwadzacy()
         auto ID = (DATA::qresult[DATA::current_choice-1]["id_przedmiot"]).as<int>();
         ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values ("
             << ID << ", "
-            << DATA::buf_id.toInt() << ");";
+            << "(SELECT id_prowadzacy FROM prj.prowadzacy WHERE " 
+            << "imie = " << std::quoted(DATA::buf_imie.getBuffer(), '\'') << " AND "
+            << "nazwisko = " << std::quoted(DATA::buf_nazwisko.getBuffer(), '\'') << " AND "
+            << "email = " << std::quoted(DATA::buf_email.getBuffer(), '\'') << " AND "
+            << "drugie_imie = " << std::quoted(DATA::buf_drugieimie.getBuffer(), '\'') << ")"
+            << ");";
     }
 
     auto filled = (DATA::buf_id != 0)

@@ -7,9 +7,6 @@ void formInputPrzedmiot()
     ImGui::NewLine();
 
     auto flags = ImGuiInputTextFlags_CharsNoBlank;
-    ImGui::InputTextWithHint("##bin_prze_id", "ID", DATA::buf_id, DATA::buf_id.size(), flags | ImGuiInputTextFlags_CharsDecimal);
-    ImGui::SameLine(); ImGui::Text("int");
-
     ImGui::InputTextWithHint("##bin_prze_nazwa", "Nazwa", DATA::buf_nazwa, DATA::buf_nazwa.size());
     ImGui::SameLine(); ImGui::Text("varchar(64)");
 
@@ -38,18 +35,17 @@ void formInputPrzedmiot()
         << " password=" << DATA::buf_password;
 
     std::stringstream ss;
-    ss << "INSERT INTO prj.przedmiot (id_przedmiot, nazwa, semestr, liczba_ects, miejsca, egzamin) values ("
-        << DATA::buf_id.toInt() << ", "
+    ss << "INSERT INTO prj.przedmiot (nazwa, semestr, liczba_ects, miejsca, egzamin) values ("
         << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ", "
         << DATA::buf_semestr.toInt() << ", "
         << DATA::buf_ects.toInt() << ", "
         << DATA::buf_miejsca.toInt() << ", "
         << (DATA::buf_egzamin ? "true" : "false") << ");";
-    
+
     if((DATA::buf_typ != 0) && (DATA::buf_opis != 0))
     {
         ss << "INSERT INTO prj.przedmiot_informacje (id_przedmiot, typ, opis) values ("
-            << DATA::buf_id.toInt() << ", "
+            << "(SELECT help.id_przedmiot FROM (SELECT id_przedmiot, row_number() over () FROM prj.przedmiot ORDER BY 1 DESC LIMIT 1) AS help)" << ", "
             << std::quoted(DATA::buf_typ.getBuffer(), '\'') << ", "
             << std::quoted(DATA::buf_opis.getBuffer(), '\'') << ");"; 
     }
@@ -65,7 +61,8 @@ void formInputPrzedmiot()
         ss << "INSERT INTO prj.przedmiot_kierunek (id_kierunek, skrot_nazwy, id_przedmiot) values ("
             << ID << ", "
             << "(SELECT skrot_nazwy FROM prj.kierunek WHERE id_kierunek = " << ID << "), "
-            << DATA::buf_id.toInt() << ");";
+            << "(SELECT help.id_przedmiot FROM (SELECT id_przedmiot, row_number() over () FROM prj.przedmiot ORDER BY 1 DESC LIMIT 1) AS help)"
+            << ");";
     }
 
     // current system does not support multiple choices from queries
