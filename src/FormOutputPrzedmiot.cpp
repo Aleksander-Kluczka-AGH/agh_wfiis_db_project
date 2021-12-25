@@ -13,6 +13,8 @@ void formOutputPrzedmiot()
         << " password=" << DATA::buf_password;
 
     tryConnect(str.str().c_str());
-    tableFromQuery("SELECT id_przedmiot AS ID, pr.nazwa, semestr, liczba_ects AS ECTS, miejsca, egzamin, typ, opis, ki.nazwa AS kierunek FROM prj.przedmiot PR FULL JOIN prj.przedmiot_informacje USING (id_przedmiot) FULL JOIN prj.przedmiot_kierunek USING (id_przedmiot) JOIN prj.kierunek KI USING (id_kierunek) ORDER BY 1;",
+    tableFromQuery("SELECT * FROM prj.OutPrzedmiot;",
         {1, 2, 7, 9, 3, 4, 6, 5, 8});
 }
+
+// view: prj.OutPrzedmiot

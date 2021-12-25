@@ -79,6 +79,7 @@ namespace DATA
         buf_egzamin = "";
         buf_typ = "";
         buf_opis = "";
+        buf_prog = "";
 
         buf_dataurodzin = "";
         buf_miejscezam = "";

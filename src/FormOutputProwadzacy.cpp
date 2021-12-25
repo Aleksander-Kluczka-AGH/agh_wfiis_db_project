@@ -13,6 +13,8 @@ void formOutputProwadzacy()
         << " password=" << DATA::buf_password;
 
     tryConnect(str.str().c_str());
-    tableFromQuery("SELECT pr.id_prowadzacy, pr.imie, pr.drugie_imie, pr.nazwisko, pr.email, wy.nazwa AS wydzial, wy.skrot_nazwy AS skrot FROM prj.prowadzacy PR FULL JOIN prj.wydzial_prowadzacy USING(id_prowadzacy) FULL JOIN prj.wydzial WY USING (id_wydzial) ORDER BY 1;",
+    tableFromQuery("SELECT * FROM prj.OutProwadzacy;",
         {1, 2, 4, 5, 6, 7});
 }
+
+// view: prj.OutProwadzacy
