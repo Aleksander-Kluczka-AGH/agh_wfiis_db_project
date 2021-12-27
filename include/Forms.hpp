@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Root.hpp"
-#include "InputBuffer.hpp"
-#include "DataManager.hpp"
 #include "Connection.hpp"
+#include "Util.hpp"
 
 void formConnection();
 void formInfo();
@@ -12,6 +10,7 @@ void formInputKierunek();
 void formInputProwadzacy();
 void formInputPrzedmiot();
 void formInputStudent();
+
 void formOutputAll();
 void formOutputKierunek();
 void formOutputProwadzacy();
