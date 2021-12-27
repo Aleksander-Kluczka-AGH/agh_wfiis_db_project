@@ -62,14 +62,6 @@ namespace DATA
     hidden::meta one;
     hidden::meta two;
     std::unique_ptr<pqxx::connection> connection = nullptr;
-    // pqxx::result qresult;
-    // bool is_conn = false;
-    // bool has_results = false;
-    // bool requested_results = false;
-    // bool query_failed = false;
-    // InputBuffer<256> buf_error;
-    // InputBuffer<64> buf_label;
-    // int current_choice = 0;
 
     pqxx::result& qresult = one.qresult;
     bool& is_conn = one.is_conn;
@@ -79,15 +71,6 @@ namespace DATA
     InputBuffer<256>& buf_error = one.buf_error;
     InputBuffer<64>& buf_label = one.buf_label;
     int& current_choice = one.current_choice;
-
-    // auto& qresult = one.qresult;
-    // auto& is_conn = one.is_conn;
-    // auto& has_results = one.has_results;
-    // auto& requested_results = one.requested_results;
-    // auto& query_failed = one.query_failed;
-    // auto& buf_error = one.buf_error;
-    // auto& buf_label = one.buf_label;
-    // auto& current_choice = one.current_choice;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -136,11 +119,7 @@ namespace DATA
             connection->close();
         }
         connection = nullptr;
-        // qresult.clear();
-        // is_conn = false;
-        // has_results = false;
-        // requested_results = false;
-        // current_choice = 0;
+
         one.reset();
         two.reset();
 

@@ -7,7 +7,6 @@ namespace hidden
     struct meta final
     {
         meta();
-        // meta(const meta&) = default;
         meta& operator=(const meta&) = default;
         void reset() noexcept;
         pqxx::result qresult;
@@ -57,14 +56,6 @@ namespace DATA
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     extern std::unique_ptr<pqxx::connection> connection;
-    // extern pqxx::result qresult;
-    // extern bool is_conn;
-    // extern bool has_results;
-    // extern bool requested_results;
-    // extern bool query_failed;
-    // extern InputBuffer<256> buf_error;
-    // extern InputBuffer<64> buf_label;
-    // extern int current_choice;
     extern hidden::meta one;
     extern hidden::meta two;
 
@@ -78,7 +69,6 @@ namespace DATA
     extern InputBuffer<64>& buf_label;
     extern int& current_choice;
     
-
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     extern std::size_t tries;
