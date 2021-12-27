@@ -40,7 +40,7 @@ void Application::placeMenuSection()
 
         ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Dodawanie");
-        if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; DATA::should_clear = true; }
+        if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; DATA::should_clear = true; std::cout << "klik!\n"; }
         if(ImGui::Button("InProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Prowadzacy; DATA::should_clear = true; }
         if(ImGui::Button("InStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Student; DATA::should_clear = true; }
         if(ImGui::Button("InKierunek", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Kierunek; DATA::should_clear = true; }
@@ -67,19 +67,19 @@ void Application::placeFormSection()
     {
         switch(m_activeSection)
         {
-            case ActiveSection::Connection: { formConnection(); break; }
-            case ActiveSection::Input_Przedmiot: { formInputPrzedmiot(); break; }
-            case ActiveSection::Input_Prowadzacy: { formInputProwadzacy(); break; }
-            case ActiveSection::Input_Student: { formInputStudent(); break; }
-            case ActiveSection::Input_Kierunek: { formInputKierunek(); break; }
-            case ActiveSection::Input_Wydzial: { formInputWydzial(); break; }
+            case ActiveSection::Connection: {                formConnection(); break; }
+            case ActiveSection::Input_Przedmiot: {           formInputPrzedmiot(); break; }
+            case ActiveSection::Input_Prowadzacy: {          formInputProwadzacy(); break; }
+            case ActiveSection::Input_Student: {             formInputStudent(); break; }
+            case ActiveSection::Input_Kierunek: {            formInputKierunek(); break; }
+            case ActiveSection::Input_Wydzial: {             formInputWydzial(); break; }
             case ActiveSection::Register_StudentPrzedmiot: { formRegisterStudentPrzedmiot(); break; }
-            case ActiveSection::Output_All: { formOutputAll(); break; }
-            case ActiveSection::Output_Przedmiot: { formOutputPrzedmiot(); break; }
-            case ActiveSection::Output_Prowadzacy: { formOutputProwadzacy(); break; }
-            case ActiveSection::Output_Student: { formOutputStudent(); break; }
-            case ActiveSection::Output_Kierunek: { formOutputKierunek(); break; }
-            case ActiveSection::Output_Wydzial: { formOutputWydzial(); break; }
+            case ActiveSection::Output_All: {                formOutputAll(); break; }
+            case ActiveSection::Output_Przedmiot: {          formOutputPrzedmiot(); break; }
+            case ActiveSection::Output_Prowadzacy: {         formOutputProwadzacy(); break; }
+            case ActiveSection::Output_Student: {            formOutputStudent(); break; }
+            case ActiveSection::Output_Kierunek: {           formOutputKierunek(); break; }
+            case ActiveSection::Output_Wydzial: {            formOutputWydzial(); break; }
             case ActiveSection::Info:
             default: { formInfo(); break; }
         }
@@ -109,8 +109,8 @@ void Application::update()
     
     ImGui::SFML::Update(m_window, m_clock.restart());
 
-    if(DATA::should_clear) { DATA::CLEAR(); }
     this->placeMenuSection();
+    if(DATA::should_clear) { DATA::CLEAR(); }
     this->placeFormSection();
     
     this->render();

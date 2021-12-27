@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Root.hpp"
 #include "Section.hpp"
 #include "Forms.hpp"
-#include "DataManager.hpp"
 
 class Application final
 {
