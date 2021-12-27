@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Root.hpp"
 #include "DataManager.hpp"
 
 static void tryConnect(const char* connection_string, const std::size_t count = 3);
@@ -157,12 +156,16 @@ static void submitButton(const std::string& connection, const std::string& query
             }
             catch(const std::exception& e)
             {
+                DATA::CLEAR();
                 DATA::query_failed = true;
                 DATA::exception_message = e.what();
                 std::cout << e.what() << std::endl;
             }
+            if(!DATA::query_failed)
+            {
+                DATA::CLEAR();
+            }
         }
-        DATA::CLEAR();
     }
 }
 

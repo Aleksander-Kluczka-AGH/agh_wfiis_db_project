@@ -14,4 +14,4 @@ namespace ImGui
         ImGuiInputTextFlags flags = 0,
         ImGuiInputTextCallback callback = __null,
         void* user_data = nullptr);
-};
+}

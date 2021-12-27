@@ -14,4 +14,4 @@ namespace ImGui
     {
         return InputTextEx(label, hint, buf, (int)buf_size, size, flags | ImGuiInputTextFlags_Multiline, callback, user_data);
     }
-};
+}
