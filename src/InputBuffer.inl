@@ -20,6 +20,12 @@ void InputBuffer<SIZE>::operator=(const char* content)
 }
 
 template <std::size_t SIZE>
+void InputBuffer<SIZE>::operator=(const InputBuffer<SIZE>& other)
+{
+    std::strcpy(m_buffer, other.m_buffer);
+}
+
+template <std::size_t SIZE>
 const char* InputBuffer<SIZE>::operator*() const
 {
     return m_buffer;
