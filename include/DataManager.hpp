@@ -2,6 +2,25 @@
 
 #include "InputBuffer.hpp"
 
+namespace hidden
+{
+    struct meta final
+    {
+        meta();
+        // meta(const meta&) = default;
+        meta& operator=(const meta&) = default;
+        void reset() noexcept;
+        pqxx::result qresult;
+        bool is_conn;
+        bool has_results;
+        bool requested_results;
+        bool query_failed;
+        InputBuffer<256> buf_error;
+        InputBuffer<64> buf_label;
+        int current_choice;
+    };
+}
+
 namespace DATA
 {
     extern InputBuffer<128> buf_host;
@@ -38,14 +57,27 @@ namespace DATA
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     extern std::unique_ptr<pqxx::connection> connection;
-    extern pqxx::result qresult;
-    extern bool is_conn;
-    extern bool has_results;
-    extern bool requested_results;
-    extern bool query_failed;
-    extern InputBuffer<256> buf_error;
-    extern InputBuffer<64> buf_label;
-    extern int current_choice;
+    // extern pqxx::result qresult;
+    // extern bool is_conn;
+    // extern bool has_results;
+    // extern bool requested_results;
+    // extern bool query_failed;
+    // extern InputBuffer<256> buf_error;
+    // extern InputBuffer<64> buf_label;
+    // extern int current_choice;
+    extern hidden::meta one;
+    extern hidden::meta two;
+
+    // typedefs for compatibility because I am super lazy
+    extern pqxx::result& qresult;
+    extern bool& is_conn;
+    extern bool& has_results;
+    extern bool& requested_results;
+    extern bool& query_failed;
+    extern InputBuffer<256>& buf_error;
+    extern InputBuffer<64>& buf_label;
+    extern int& current_choice;
+    
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

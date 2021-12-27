@@ -223,7 +223,8 @@ void formInputProwadzacy()
         << std::quoted(DATA::buf_email.getBuffer(), '\'') << ");";
 
     tryConnect(str.str().c_str());
-    chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot EXCEPT (SELECT id_przedmiot, nazwa, semestr FROM prj.prowadzacy_przedmiot JOIN prj.przedmiot USING (id_przedmiot)) ORDER BY 1;", "Wybierz przedmiot:", 1);
+    chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot EXCEPT (SELECT id_przedmiot, nazwa, semestr FROM prj.prowadzacy_przedmiot JOIN prj.przedmiot USING (id_przedmiot)) ORDER BY 1;",
+        "Wybierz przedmiot:", 1);
     
     if(DATA::current_choice > 0)
     {
@@ -231,12 +232,17 @@ void formInputProwadzacy()
         auto ID = (DATA::qresult[DATA::current_choice-1]["id_przedmiot"]).as<int>();
         ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values ("
             << ID << ", "
-            << "(SELECT id_prowadzacy FROM prj.prowadzacy WHERE " 
-            << "imie = " << std::quoted(DATA::buf_imie.getBuffer(), '\'') << " AND "
-            << "nazwisko = " << std::quoted(DATA::buf_nazwisko.getBuffer(), '\'') << " AND "
-            << "email = " << std::quoted(DATA::buf_email.getBuffer(), '\'') << " AND "
-            << "drugie_imie = " << std::quoted(DATA::buf_drugieimie.getBuffer(), '\'') << ")"
-            << ");";
+            << "(SELECT help.id_prowadzacy FROM (SELECT id_prowadzacy, row_number() over () FROM prj.prowadzacy ORDER BY 1 DESC LIMIT 1) AS help));";
+    }
+
+    chooseFromQuery("SELECT id_wydzial, nazwa, skrot_nazwy FROM prj.wydzial;", "Dostepne wydzialy:", 2, 2, "##submit2");
+    
+    if(DATA::two.current_choice > 0)
+    {
+        auto ID = (DATA::two.qresult[DATA::two.current_choice-1]["id_wydzial"]).as<int>();
+        ss << "INSERT INTO prj.wydzial_prowadzacy (id_prowadzacy, id_wydzial) values("
+            << "(SELECT help.id_prowadzacy FROM (SELECT id_prowadzacy, row_number() over () FROM prj.prowadzacy ORDER BY 1 DESC LIMIT 1) AS help), "
+            << ID << ");";
     }
 
     auto filled = (DATA::buf_id != 0)
@@ -323,15 +329,19 @@ void formInputPrzedmiot()
     // suggestion: change qresults to std::vector<pqxx::result>
     // same for the flags (or maybe create a struct!) (and make vector of structs)
 
-    // DATA::current_choice = 0;
-    // DATA::requested_results = false;
-    // tryConnect(str.str().c_str());
-    // chooseFromQuery("SELECT id_prowadzacy, imie, nazwisko, email FROM prj.prowadzacy EXCEPT SELECT id_prowadzacy, imie, nazwisko, email FROM prj.prowadzacy_przedmiot JOIN prj.prowadzacy USING (id_prowadzacy) ORDER BY 1;",
-    //     "Dostepni prowadzacy:", 2, "##submit2");
-    
-    // if(DATA::current_choice > 0)
+    // two.current_choice = 0;
+    // two.requested_results = false;
+    // if(DATA::buf_nazwa.length() != 0)
     // {
-    //     auto ID = (DATA::qresult[DATA::current_choice-1]["id_prowadzacy"]).as<int>();
+    //     std::stringstream query;
+    //     query << "SELECT * FROM prj.WydzialBezKierunku(" << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ");";
+    //     // tryConnect(str.str().c_str());
+    //     chooseFromQuery(query.str(), "Dostepni prowadzacy:", 2, 2, "##submit2");
+    // }
+    
+    // if(DATA::two.current_choice > 0)
+    // {
+    //     auto ID = (DATA::qresult[DATA::two.current_choice-1]["id_prowadzacy"]).as<int>();
     //     ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values("
     //         << DATA::buf_id.toInt() << ", "
     //         << ID << ");";
@@ -345,9 +355,17 @@ void formInputPrzedmiot()
 
     if(filled)
     {
+        std::stringstream query;
+        query << "SELECT * FROM prj.WydzialBezKierunku(" << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ");";
+        // tryConnect(str.str().c_str());
+        chooseFromQuery(query.str(), "Dostepni prowadzacy:", 2, 2, "##submit2");
+    }
+
+    if(filled)
+    {
         submitButton(str.str(), ss.str());
     }
-    if(DATA::query_failed)
+    if(DATA::two.query_failed)
     {
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }

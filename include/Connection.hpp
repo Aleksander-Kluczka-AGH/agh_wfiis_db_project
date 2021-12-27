@@ -3,9 +3,10 @@
 #include "DataManager.hpp"
 
 static void tryConnect(const char* connection_string, const std::size_t count = 3);
-static void sendQuery(const std::string& query);
-static void chooseFromQuery(const std::string& query, const std::string& init_label = "Wybierz", const std::size_t& column_label = 0, const std::string& unique_id = "##Submit");
-static void comboFromQuery(const std::size_t& column_label, const std::string& unique_id = "##Submit");
+static void sendQuery(const std::string& query, const std::size_t& qrid = 1);
+static void resetConnection();
+static void chooseFromQuery(const std::string& query, const std::string& init_label = "Wybierz", const std::size_t& column_label = 0, const std::size_t& qrid = 1, const std::string& unique_id = "##Submit");
+static void comboFromQuery(const std::size_t& column_label, const std::size_t& qrid = 1, const std::string& unique_id = "##Submit");
 static void submitButton(const std::string& connection, const std::string& query);
 static void tableFromQuery(const std::string& query, const std::vector<std::size_t>& columns);
 
@@ -15,7 +16,7 @@ static void tableFromQuery(const std::string& query, const std::vector<std::size
 [[maybe_unused]]
 static void tryConnect(const char* connection_string, const std::size_t count)
 {
-    if(!DATA::is_conn && DATA::tries < count)
+    if(!DATA::one.is_conn && DATA::tries < count)
     {
         try
         {
@@ -26,13 +27,15 @@ static void tryConnect(const char* connection_string, const std::size_t count)
             }
             else
             {
-                DATA::is_conn = true;
+                DATA::one.is_conn = true;
+                DATA::two.is_conn = true;
                 return;
             }
         }
         catch(const std::exception& e)
         {
-            DATA::is_conn = false;
+            DATA::one.is_conn = false;
+            DATA::two.is_conn = false;
             DATA::exception_message = e.what();
             DATA::connection.reset(nullptr);
             DATA::tries++;
@@ -42,33 +45,44 @@ static void tryConnect(const char* connection_string, const std::size_t count)
 }
 
 [[maybe_unused]]
-static void sendQuery(const std::string& query)
+static void sendQuery(const std::string& query, const std::size_t& qrid)
 {
-    int& sel = DATA::current_choice;
+    // std::cout << __PRETTY_FUNCTION__ << '\n';
+    auto temp = std::ref(DATA::one);
+    if(qrid == 2)
+    {
+        temp = std::ref(DATA::two);
+        // std::cout << "going with TWO\n";
+    }
+    int& sel = temp.get().current_choice;
+    // std::cout << "current_choice = " << sel << '\n';
     if(DATA::connection && DATA::connection->is_open())
     {
-        DATA::is_conn = true;
-        if(!DATA::requested_results && DATA::tries < 3)
+        // std::cout << "connection open\n";
+        temp.get().is_conn = true;
+        if(!temp.get().requested_results && DATA::tries < 3)
         {
+            // std::cout << "requesting results... attempt " << DATA::tries << '\n';
             try
             {
-                DATA::requested_results = true;
+                temp.get().requested_results = true;
                 pqxx::work W{*DATA::connection};
                 auto res = W.exec(query.c_str());
                 W.commit();
-                DATA::qresult.swap(res);
+                // std::cout << "commiting work, query = '" << query << "'\n result size = " << res.size() << '\n';
+                temp.get().qresult.swap(res);
             }
             catch(const std::exception& e)
             {
-                std::cout << e.what() << std::endl;
-                DATA::buf_error = e.what();
+                std::cout << e.what() << '\n';
+                temp.get().buf_error = e.what();
                 DATA::tries++;
                 sel = -1;
                 return;
             }
 
-            DATA::has_results = !DATA::qresult.empty();
-            // DATA::buf_label = init_label.c_str();
+            temp.get().has_results = !temp.get().qresult.empty();
+            // std::cout << "finishing... has_result = " << temp.get().has_results << ", requested_result = " << temp.get().requested_results << '\n';
         }
     }
     else
@@ -84,7 +98,8 @@ static void sendQuery(const std::string& query)
 [[maybe_unused]]
 static void resetConnection()
 {
-    DATA::is_conn = false;
+    DATA::one.is_conn = false;
+    DATA::two.is_conn = false;
     DATA::tries = 0;
     if(DATA::connection)
     {
@@ -98,44 +113,68 @@ static void chooseFromQuery(
     const std::string& query,
     const std::string& init_label,
     const std::size_t& column_label,
+    const std::size_t& qrid,
     const std::string& unique_id)
 {
-    if(DATA::is_conn)
+    auto temp = std::ref(DATA::one);
+    if(qrid == 2)
     {
-        if(!DATA::requested_results) { DATA::buf_label = init_label.c_str(); }
-        sendQuery(query);
+        temp = std::ref(DATA::two);
     }
-    comboFromQuery(column_label, unique_id);
+    if(temp.get().is_conn)
+    {
+        if(!temp.get().requested_results) { temp.get().buf_label = init_label.c_str(); }
+        sendQuery(query, qrid);
+    }
+    comboFromQuery(column_label, qrid, unique_id);
 }
 
 [[maybe_unused]]
-static void comboFromQuery(const std::size_t& column_label, const std::string& unique_id)
+static void comboFromQuery(const std::size_t& column_label, const std::size_t& qrid, const std::string& unique_id)
 {
-    if(DATA::requested_results && DATA::has_results)
+    // std::cout << __PRETTY_FUNCTION__ << '\n';
+    auto temp = std::ref(DATA::one);
+    // std::cout << "address ONE = " << &DATA::one << '\n';
+    // std::cout << "address TWO = " << &DATA::two << '\n';
+    // std::cout << "address temp = " << &temp.get() << '\n';
+    if(qrid == 2)
     {
-        if(ImGui::BeginCombo(unique_id.c_str(), DATA::buf_label.getBuffer()))
+        temp = std::ref(DATA::two);
+        // std::cout << "going with TWO\n";
+        // std::cout << "address inside = " << &temp.get() << '\n';
+
+    }
+    // std::cout << "address outside = " << &temp.get() << '\n';
+    if(temp.get().requested_results && temp.get().has_results)
+    {
+        // std::cout << "requested and obtained results\n";
+        // std::cout << "result size = " << temp.get().qresult.size() << '\n';
+        if(ImGui::BeginCombo(unique_id.c_str(), temp.get().buf_label.getBuffer()))
         {
+            // std::cout << "inside the combo!\n";
             auto iter = 1;
-            for(auto row : DATA::qresult)
+            for(auto row : temp.get().qresult)
             {
                 std::stringstream ss;
                 for(auto col : row) { ss << col << "  "; }
 
                 if(ImGui::Selectable(ss.str().c_str()))  // if currently selected
                 {
-                    DATA::buf_label = row[column_label].c_str();  // use buffer to preview current choice
-                    DATA::current_choice = iter;
+                    temp.get().buf_label = row[column_label].c_str();  // use buffer to preview current choice
+                    temp.get().current_choice = iter;
+                    // std::cout << "selected '" << temp.get().buf_label << "', current_choice = " << temp.get().current_choice << '\n';
                 }
                 iter++;
             }
             ImGui::EndCombo();
         }
     }
-    else if(!DATA::has_results)
+    else if(!temp.get().has_results)
     {
         ImGui::TextWrapped("Nie otrzymano wynikow zwrotnych.");
-        DATA::current_choice = -1;
+        temp.get().current_choice = -1;
     }
+    // std::cout << '\n';
 }
 
 [[maybe_unused]]
