@@ -40,7 +40,7 @@ void Application::placeMenuSection()
 
         ImGui::NewLine(); ImGui::Separator();
         ImGui::TextColored(sf::Color{255, 0, 0, 255}, "Dodawanie");
-        if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; DATA::should_clear = true; std::cout << "klik!\n"; }
+        if(ImGui::Button("InPrzedmiot", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Przedmiot; DATA::should_clear = true; }
         if(ImGui::Button("InProwadzacy", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Prowadzacy; DATA::should_clear = true; }
         if(ImGui::Button("InStudent", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Student; DATA::should_clear = true; }
         if(ImGui::Button("InKierunek", sf::Vector2f(w, 20.f))) { m_activeSection = ActiveSection::Input_Kierunek; DATA::should_clear = true; }

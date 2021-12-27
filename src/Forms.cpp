@@ -46,6 +46,8 @@ void formConnection()
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void formInfo()
 {
     ImGui::TextColored(sf::Color{230, 230, 140}, "INFORMACJE");
@@ -57,6 +59,8 @@ void formInfo()
     ImGui::NewLine();
     ImGui::TextDisabled("Autor: Aleksander Kluczka");
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void formInputWydzial()
 {
@@ -82,8 +86,6 @@ void formInputWydzial()
         << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << ", "
         << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ");";
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     auto filled = (DATA::buf_nazwa.length() != 0
         && DATA::buf_skrotnazwy.length() != 0);
 
@@ -96,6 +98,8 @@ void formInputWydzial()
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void formInputKierunek()
 {
@@ -145,8 +149,6 @@ void formInputKierunek()
             << DATA::buf_prog.toInt() << ");";
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     auto filled = (DATA::buf_nazwa.length() != 0
         && DATA::buf_skrotnazwy.length() != 0
         && DATA::buf_miejsca.length() != 0
@@ -186,6 +188,8 @@ void formInputKierunek()
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void formInputProwadzacy()
 {
     ImGui::TextColored(sf::Color{230, 230, 140}, "NOWY PROWADZACY");
@@ -217,8 +221,6 @@ void formInputProwadzacy()
         << std::quoted(DATA::buf_drugieimie.getBuffer(), '\'') << ", "
         << std::quoted(DATA::buf_nazwisko.getBuffer(), '\'') << ", "
         << std::quoted(DATA::buf_email.getBuffer(), '\'') << ");";
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     tryConnect(str.str().c_str());
     chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot EXCEPT (SELECT id_przedmiot, nazwa, semestr FROM prj.prowadzacy_przedmiot JOIN prj.przedmiot USING (id_przedmiot)) ORDER BY 1;", "Wybierz przedmiot:", 1);
@@ -252,6 +254,8 @@ void formInputProwadzacy()
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void formInputPrzedmiot()
 {
@@ -302,8 +306,6 @@ void formInputPrzedmiot()
             << std::quoted(DATA::buf_opis.getBuffer(), '\'') << ");"; 
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     tryConnect(str.str().c_str());
     chooseFromQuery("SELECT id_kierunek, nazwa, stopien FROM prj.kierunek ORDER BY 1;", "Wybierz kierunek:", 1);
     
@@ -350,6 +352,8 @@ void formInputPrzedmiot()
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void formInputStudent()
 {
@@ -447,7 +451,7 @@ void formInputStudent()
             << "(SELECT TO_DATE(CURRENT_TIMESTAMP::VARCHAR, 'YYYY-MM-DD')), "
             << "TO_DATE('2077-5-22', 'YYYY-MM-DD'));";
     }
-    // SELECT TO_DATE(CURRENT_TIMESTAMP::VARCHAR, 'YYYY-MM-DD');  // wez aktualna date
+    // SELECT TO_DATE(CURRENT_TIMESTAMP::VARCHAR, 'YYYY-MM-DD');  // get current date
 
     auto filled = (DATA::buf_id != 0)
         && (DATA::buf_imie.length() != 0)
@@ -465,10 +469,14 @@ void formInputStudent()
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void formOutputAll()
 {
     ImGui::Text("Output All");
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void formOutputKierunek()
 {
@@ -483,8 +491,10 @@ void formOutputKierunek()
         << " password=" << DATA::buf_password;
 
     tryConnect(str.str().c_str());
-    tableFromQuery("SELECT id_kierunek, nazwa, liczba_miejsc, dlugosc, stopien FROM prj.kierunek ORDER BY 1", {1, 2, 3, 4, 5});
+    tableFromQuery("SELECT * FROM prj.OutKierunek;", {1, 2, 3, 4, 5});
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void formOutputProwadzacy()
 {
@@ -503,6 +513,8 @@ void formOutputProwadzacy()
         {1, 2, 4, 5, 6, 7});
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void formOutputPrzedmiot()
 {
     ImGui::TextColored(sf::Color{230, 230, 140}, "LISTA PRZEDMIOTOW");
@@ -519,6 +531,8 @@ void formOutputPrzedmiot()
     tableFromQuery("SELECT * FROM prj.OutPrzedmiot;",
         {1, 2, 7, 9, 3, 4, 6, 5, 8});
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void formOutputStudent()
 {
@@ -537,6 +551,8 @@ void formOutputStudent()
         {1, 2, 4, 5, 6, 7, 8, 9, 12, 10, 11});
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void formOutputWydzial()
 {
     ImGui::TextColored(sf::Color{230, 230, 140}, "LISTA STUDENTOW");
@@ -550,15 +566,11 @@ void formOutputWydzial()
         << " password=" << DATA::buf_password;
 
     tryConnect(str.str().c_str());
-    tableFromQuery("SELECT id_wydzial, nazwa, wy.skrot_nazwy, COUNT(id_prowadzacy) AS prowadzacy, COUNT(id_kierunek) AS kierunki FROM prj.wydzial WY FULL JOIN prj.wydzial_prowadzacy USING (id_wydzial) FULL JOIN prj.wydzial_kierunek USING (id_wydzial) GROUP BY 1, 2, 3 ORDER BY 1;",
+    tableFromQuery("SELECT * FROM prj.OutWydzial;",
         {1, 2, 3, 4, 5});
-    // SELECT id_wydzial, nazwa, wy.skrot_nazwy, COUNT(id_prowadzacy) AS prowadzacy, COUNT(id_kierunek) AS kierunki
-    // FROM prj.wydzial WY
-    // FULL JOIN prj.wydzial_prowadzacy USING (id_wydzial)
-    // FULL JOIN prj.wydzial_kierunek USING (id_wydzial)
-    // GROUP BY 1, 2, 3
-    // ORDER BY 1;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void formRegisterStudentPrzedmiot()
 {
