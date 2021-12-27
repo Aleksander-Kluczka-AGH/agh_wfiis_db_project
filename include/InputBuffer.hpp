@@ -10,6 +10,7 @@ class InputBuffer
     InputBuffer();
     InputBuffer(const char* content);
     void operator=(const char* content);
+    void operator=(const InputBuffer<SIZE>& other);
 
     const char* operator*() const;
     operator char*();
