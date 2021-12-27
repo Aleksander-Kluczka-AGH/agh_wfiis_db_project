@@ -222,6 +222,7 @@ void formInputProwadzacy()
         << std::quoted(DATA::buf_nazwisko.getBuffer(), '\'') << ", "
         << std::quoted(DATA::buf_email.getBuffer(), '\'') << ");";
 
+    // select a free subject from the dropdown list
     tryConnect(str.str().c_str());
     chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot EXCEPT (SELECT id_przedmiot, nazwa, semestr FROM prj.prowadzacy_przedmiot JOIN prj.przedmiot USING (id_przedmiot)) ORDER BY 1;",
         "Wybierz przedmiot:", 1);
@@ -235,6 +236,7 @@ void formInputProwadzacy()
             << "(SELECT help.id_prowadzacy FROM (SELECT id_prowadzacy, row_number() over () FROM prj.prowadzacy ORDER BY 1 DESC LIMIT 1) AS help));";
     }
 
+    // select a faculty from the dropdown list
     chooseFromQuery("SELECT id_wydzial, nazwa, skrot_nazwy FROM prj.wydzial;", "Dostepne wydzialy:", 2, 2, "##submit2");
     
     if(DATA::two.current_choice > 0)
@@ -304,6 +306,7 @@ void formInputPrzedmiot()
         << DATA::buf_miejsca.toInt() << ", "
         << (DATA::buf_egzamin ? "true" : "false") << ");";
 
+    // if both subject type and description are filled in, insert them to the database
     if((DATA::buf_typ != 0) && (DATA::buf_opis != 0))
     {
         ss << "INSERT INTO prj.przedmiot_informacje (id_przedmiot, typ, opis) values ("
@@ -312,9 +315,10 @@ void formInputPrzedmiot()
             << std::quoted(DATA::buf_opis.getBuffer(), '\'') << ");"; 
     }
 
+    // select a field from the dropdown list
     tryConnect(str.str().c_str());
-    chooseFromQuery("SELECT id_kierunek, nazwa, stopien FROM prj.kierunek ORDER BY 1;", "Wybierz kierunek:", 1);
-    
+    chooseFromQuery("SELECT id_kierunek, nazwa, stopien FROM prj.kierunek ORDER BY 1;", "Wybierz kierunek:", 2);
+
     if(DATA::current_choice > 0)
     {
         auto ID = (DATA::qresult[DATA::current_choice-1]["id_kierunek"]).as<int>();
@@ -325,41 +329,24 @@ void formInputPrzedmiot()
             << ");";
     }
 
-    // current system does not support multiple choices from queries
-    // suggestion: change qresults to std::vector<pqxx::result>
-    // same for the flags (or maybe create a struct!) (and make vector of structs)
+    // select a free professor from the dropdown list
+    std::stringstream query;
+    query << "SELECT id_prowadzacy, imie, nazwisko FROM prj.prowadzacy EXCEPT SELECT id_prowadzacy, imie, nazwisko FROM prj.prowadzacy_przedmiot JOIN prj.prowadzacy USING (id_prowadzacy);";
+    chooseFromQuery(query.str(), "Dostepni prowadzacy:", 3, 2, "##submit2");
 
-    // two.current_choice = 0;
-    // two.requested_results = false;
-    // if(DATA::buf_nazwa.length() != 0)
-    // {
-    //     std::stringstream query;
-    //     query << "SELECT * FROM prj.WydzialBezKierunku(" << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ");";
-    //     // tryConnect(str.str().c_str());
-    //     chooseFromQuery(query.str(), "Dostepni prowadzacy:", 2, 2, "##submit2");
-    // }
-    
-    // if(DATA::two.current_choice > 0)
-    // {
-    //     auto ID = (DATA::qresult[DATA::two.current_choice-1]["id_prowadzacy"]).as<int>();
-    //     ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values("
-    //         << DATA::buf_id.toInt() << ", "
-    //         << ID << ");";
-    // }
+    if(DATA::two.current_choice > 0)
+    {
+        auto ID = (DATA::two.qresult[DATA::two.current_choice-1]["id_prowadzacy"]).as<int>();
+        ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values("
+            << "(SELECT help.id_przedmiot FROM (SELECT id_przedmiot, row_number() over () FROM prj.przedmiot ORDER BY 1 DESC LIMIT 1) AS help), "
+            << ID << ");";
+    }
 
     auto filled = (DATA::buf_id != 0)
         && (DATA::buf_nazwa.length() != 0)
         && (DATA::buf_semestr.length() != 0)
         && (DATA::buf_ects.length() != 0)
         && (DATA::buf_miejsca.length() != 0);
-
-    if(filled)
-    {
-        std::stringstream query;
-        query << "SELECT * FROM prj.WydzialBezKierunku(" << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ");";
-        // tryConnect(str.str().c_str());
-        chooseFromQuery(query.str(), "Dostepni prowadzacy:", 2, 2, "##submit2");
-    }
 
     if(filled)
     {

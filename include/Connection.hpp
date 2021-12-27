@@ -47,29 +47,21 @@ static void tryConnect(const char* connection_string, const std::size_t count)
 [[maybe_unused]]
 static void sendQuery(const std::string& query, const std::size_t& qrid)
 {
-    // std::cout << __PRETTY_FUNCTION__ << '\n';
     auto temp = std::ref(DATA::one);
-    if(qrid == 2)
-    {
-        temp = std::ref(DATA::two);
-        // std::cout << "going with TWO\n";
-    }
+    if(qrid == 2) { temp = std::ref(DATA::two); }
+
     int& sel = temp.get().current_choice;
-    // std::cout << "current_choice = " << sel << '\n';
     if(DATA::connection && DATA::connection->is_open())
     {
-        // std::cout << "connection open\n";
         temp.get().is_conn = true;
         if(!temp.get().requested_results && DATA::tries < 3)
         {
-            // std::cout << "requesting results... attempt " << DATA::tries << '\n';
             try
             {
                 temp.get().requested_results = true;
                 pqxx::work W{*DATA::connection};
                 auto res = W.exec(query.c_str());
                 W.commit();
-                // std::cout << "commiting work, query = '" << query << "'\n result size = " << res.size() << '\n';
                 temp.get().qresult.swap(res);
             }
             catch(const std::exception& e)
@@ -82,7 +74,6 @@ static void sendQuery(const std::string& query, const std::size_t& qrid)
             }
 
             temp.get().has_results = !temp.get().qresult.empty();
-            // std::cout << "finishing... has_result = " << temp.get().has_results << ", requested_result = " << temp.get().requested_results << '\n';
         }
     }
     else
@@ -117,10 +108,8 @@ static void chooseFromQuery(
     const std::string& unique_id)
 {
     auto temp = std::ref(DATA::one);
-    if(qrid == 2)
-    {
-        temp = std::ref(DATA::two);
-    }
+    if(qrid == 2) { temp = std::ref(DATA::two); }
+
     if(temp.get().is_conn)
     {
         if(!temp.get().requested_results) { temp.get().buf_label = init_label.c_str(); }
@@ -132,26 +121,13 @@ static void chooseFromQuery(
 [[maybe_unused]]
 static void comboFromQuery(const std::size_t& column_label, const std::size_t& qrid, const std::string& unique_id)
 {
-    // std::cout << __PRETTY_FUNCTION__ << '\n';
     auto temp = std::ref(DATA::one);
-    // std::cout << "address ONE = " << &DATA::one << '\n';
-    // std::cout << "address TWO = " << &DATA::two << '\n';
-    // std::cout << "address temp = " << &temp.get() << '\n';
-    if(qrid == 2)
-    {
-        temp = std::ref(DATA::two);
-        // std::cout << "going with TWO\n";
-        // std::cout << "address inside = " << &temp.get() << '\n';
-
-    }
-    // std::cout << "address outside = " << &temp.get() << '\n';
+    if(qrid == 2) { temp = std::ref(DATA::two); }
+    
     if(temp.get().requested_results && temp.get().has_results)
     {
-        // std::cout << "requested and obtained results\n";
-        // std::cout << "result size = " << temp.get().qresult.size() << '\n';
         if(ImGui::BeginCombo(unique_id.c_str(), temp.get().buf_label.getBuffer()))
         {
-            // std::cout << "inside the combo!\n";
             auto iter = 1;
             for(auto row : temp.get().qresult)
             {
@@ -162,7 +138,6 @@ static void comboFromQuery(const std::size_t& column_label, const std::size_t& q
                 {
                     temp.get().buf_label = row[column_label].c_str();  // use buffer to preview current choice
                     temp.get().current_choice = iter;
-                    // std::cout << "selected '" << temp.get().buf_label << "', current_choice = " << temp.get().current_choice << '\n';
                 }
                 iter++;
             }
@@ -174,7 +149,6 @@ static void comboFromQuery(const std::size_t& column_label, const std::size_t& q
         ImGui::TextWrapped("Nie otrzymano wynikow zwrotnych.");
         temp.get().current_choice = -1;
     }
-    // std::cout << '\n';
 }
 
 [[maybe_unused]]
