@@ -317,7 +317,7 @@ void formInputPrzedmiot()
 
     // select a field from the dropdown list
     tryConnect(str.str().c_str());
-    chooseFromQuery("SELECT id_kierunek, nazwa, stopien FROM prj.kierunek ORDER BY 1;", "Wybierz kierunek:", 2);
+    chooseFromQuery("SELECT id_kierunek, nazwa, stopien FROM prj.kierunek ORDER BY 1;", "Wybierz kierunek:", 1);
 
     if(DATA::current_choice > 0)
     {
@@ -332,7 +332,7 @@ void formInputPrzedmiot()
     // select a free professor from the dropdown list
     std::stringstream query;
     query << "SELECT id_prowadzacy, imie, nazwisko FROM prj.prowadzacy EXCEPT SELECT id_prowadzacy, imie, nazwisko FROM prj.prowadzacy_przedmiot JOIN prj.prowadzacy USING (id_prowadzacy);";
-    chooseFromQuery(query.str(), "Dostepni prowadzacy:", 3, 2, "##submit2");
+    chooseFromQuery(query.str(), "Dostepni prowadzacy:", 2, 2, "##submit2");
 
     if(DATA::two.current_choice > 0)
     {

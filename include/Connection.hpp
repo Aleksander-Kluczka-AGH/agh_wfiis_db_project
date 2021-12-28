@@ -126,6 +126,11 @@ static void comboFromQuery(const std::size_t& column_label, const std::size_t& q
     
     if(temp.get().requested_results && temp.get().has_results)
     {
+        // sanity check
+        auto safe_column_label = column_label;
+        const auto size = static_cast<std::size_t>(temp.get().qresult.columns());
+        if(safe_column_label >= size) { safe_column_label = size - 1; }  // we have results so size > 0
+
         if(ImGui::BeginCombo(unique_id.c_str(), temp.get().buf_label.getBuffer()))
         {
             auto iter = 1;
@@ -136,7 +141,7 @@ static void comboFromQuery(const std::size_t& column_label, const std::size_t& q
 
                 if(ImGui::Selectable(ss.str().c_str()))  // if currently selected
                 {
-                    temp.get().buf_label = row[column_label].c_str();  // use buffer to preview current choice
+                    temp.get().buf_label = row[safe_column_label].c_str();  // use buffer to preview current choice
                     temp.get().current_choice = iter;
                 }
                 iter++;
