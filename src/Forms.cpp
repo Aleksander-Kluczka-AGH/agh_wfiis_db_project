@@ -52,12 +52,53 @@ void formInfo()
 {
     ImGui::TextColored(sf::Color{230, 230, 140}, "INFORMACJE");
     ImGui::NewLine();
-    ImGui::Text("Witaj w interfejcie graficznym sluzacym do obslugi bazy danych przedmiotow obieralnych!");
-    ImGui::Text("Uzywajac panelu po lewej stronie, wyswietl lub dodaj nowe informacje uzywajac formularzy.");
-    ImGui::NewLine();
-    ImGui::Text("Do tej informacji zawsze mozesz wrocic, klikajac przycisk \"Informacje\" w panelu.");
-    ImGui::NewLine();
-    ImGui::TextDisabled("Autor: Aleksander Kluczka");
+    std::stringstream info1, info2;
+    info1 << "Witaj w interfejcie graficznym sluzacym do obslugi bazy danych na uczelni!\n";
+    info1 << "Uzywajac panelu po lewej stronie, wyswietl lub dodaj nowe informacje uzywajac formularzy.\n\n";
+    info1 << "Program przystosowany jest do obslugi bazy w dowolym miejscu, jako ze istnieje mozliwosc\n";
+    info1 << "podania hosta, portu, nazwy bazy danych, loginu uzytkownika oraz hasla. Domyslne wartosci\n";
+    info1 << "to 'localhost', '5432', 'u9kluczka', 'u9kluczka'. Zeby wykorzystac gotowa juz baze danych\n";
+    info1 << "na serwerze Pascal, nalezy otworzyc tunel ssh na porcie 22 z forwardowaniem portu 5432.\n";
+    info1 << "Mozna to osiagnac za pomoca komendy (zamien <nazwisko>):\n\n";
+
+    info2 << "Polaczenie mozesz sprawdzic w zakladce \"Polaczenie\". Gdyby zaistniala taka potrzeba,\n";
+    info2 << "rowniez mozna zmienic parametry polaczenia.\n\n";
+    info2 << "Do tej informacji zawsze mozesz wrocic, klikajac przycisk \"Informacje\" w panelu.\n\n\n\n";
+    info2 << "CZP (Frequently Asked Questions (FAQ), ale po polsku):";
+
+    ImGui::Text("%s", info1.str().c_str());
+    ImGui::TextColored(sf::Color::Green, "ssh -L 5432:localhost:5432 9<nazwisko>@pascal.fis.agh.edu.pl -o ServerAliveInterval=180 -o ServerAliveCountMax=2\n\n");
+    ImGui::Text("%s", info2.str().c_str());
+    auto q = [](const std::string& content) { ImGui::TextColored(sf::Color::Yellow, " - %s", content.c_str()); };
+    auto a = [](const std::string& content) { ImGui::Text("%s", content.c_str()); };
+    q("Program sie scrashowal, dlaczego?");
+    a("Wynika to z faktu, ze \"libpqxx\" jest beznadziejnie napisana biblioteka, ktora uwielbia rzucac");
+    a("wyjatki. Zapewniam, ze zrobilem wszystko co w mojej mocy, by takich przypadkow bylo jak najmniej!");
+    a("Jednak nie zawsze uda mi sie znalezc wszystkie krytyczne bledy. Niestety o kulawosci biblioteki");
+    a("zorientowalem sie za pozno, zeby nie zaprzepaszczac wlozonej juz pracy.\n\n");
+    
+    q("Baza danych ma wiecej encji, niz ten program ma formularzy.");
+    a("Zgadza sie, jesli uzupelniane sa wszystkie pola w formularzach, wiekszosc tabel jest wypelniana");
+    a("automatycznie. Urozmaicenie funkcjonalnosci wymagaloby wiecej czasu, ktorego cos ostatnio brakuje.\n\n");
+
+    q("Dlaczego meczysz sie w C++, zamiast jak czlowiek stworzyc interfejs WWW?");
+    a("Odpowiedz brzmi: nie wiem, ale sie domyslam.\n\n");
+
+    q("Interfejs jest bardzo \"surowy\", a czcionka nieczytelna.");
+    a("Jest to domyslna czcionka biblioteki \"dear imgui\". Jej zmiana wiazalaby sie z utrata prostoty");
+    a("dzialania tego programu i kompilacji jego kodu zrodlowego (czy dany system posiada czcionke X?).");
+    a("Projekt nie przyznaje (i nie odejmuje?) punktow za jakosc interfejsu graficznego, dlatego tez");
+    a("nie poswiecilem temu tyle czasu, ile powinienem.\n\n");
+
+    q("Aplikacja nie ma polskich znakow.");
+    a("Patrz: odpowiedz na poprzednie pytanie.\n\n");
+
+    q("Bledy wyswietlaja sie po angielsku.");
+    a("Sa to bledy wyrzucane przez biblioteke \"libpqxx\". Oczywiscie moglbym przeslonic ich tresc jakas");
+    a("przetlumaczona wiadomoscia, ale wtedy nie otrzymaloby sie wszystkich przydatnych informacji, ktore");
+    a("sa wtedy podawane. Lepsze to, niz Microsoftowe \"cos poszlo nie tak\" bez wypisywania kodu bledu ;).");
+    
+    ImGui::NewLine(); ImGui::TextDisabled("Autor: Aleksander Kluczka");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
