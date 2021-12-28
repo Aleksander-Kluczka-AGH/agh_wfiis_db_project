@@ -9,4 +9,4 @@
 	url = https://github.com/ocornut/imgui.git
 [submodule "lib/libpqxx"]
 	path = lib/libpqxx
-	url = https://github.com/jtv/libpqxx.git
+	url = https://github.com/vis4rd/libpqxx.git
