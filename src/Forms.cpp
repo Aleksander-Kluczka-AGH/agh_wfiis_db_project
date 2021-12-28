@@ -93,7 +93,8 @@ void formInputWydzial()
     {
         submitButton(str.str(), ss.str());
     }
-    if(DATA::query_failed)
+    
+    if(DATA::query_failed || !DATA::is_conn)
     {
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
@@ -144,8 +145,7 @@ void formInputKierunek()
     {
         ss << "INSERT INTO prj.kierunek_wymagania (skrot_nazwy, id_kierunek, prog_punktowy) values ("
             << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << ", "
-            << "(SELECT id_kierunek FROM prj.kierunek WHERE skrot_nazwy = "
-                << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << "), "
+            << "(SELECT id_kierunek FROM prj.LastKierunek), "
             << DATA::buf_prog.toInt() << ");";
     }
 
@@ -172,8 +172,7 @@ void formInputKierunek()
             auto ID = (DATA::qresult[DATA::current_choice-1]["id_wydzial"]).as<int>();
             ss << "INSERT INTO prj.wydzial_kierunek (id_wydzial, id_kierunek, skrot_nazwy) values ("
                 << ID << ", "
-                << "(SELECT id_kierunek FROM prj.kierunek WHERE skrot_nazwy = "
-                    << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << "), "
+                << "(SELECT id_kierunek FROM prj.LastKierunek), "
                 << std::quoted(DATA::buf_skrotnazwy.getBuffer(), '\'') << ");";
         }
     }
@@ -182,7 +181,8 @@ void formInputKierunek()
     {
         submitButton(str.str(), ss.str());
     }
-    if(DATA::query_failed)
+
+    if(DATA::query_failed || !DATA::is_conn)
     {
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
@@ -224,8 +224,7 @@ void formInputProwadzacy()
 
     // select a free subject from the dropdown list
     tryConnect(str.str().c_str());
-    chooseFromQuery("SELECT id_przedmiot, nazwa, semestr FROM prj.przedmiot EXCEPT (SELECT id_przedmiot, nazwa, semestr FROM prj.prowadzacy_przedmiot JOIN prj.przedmiot USING (id_przedmiot)) ORDER BY 1;",
-        "Wybierz przedmiot:", 1);
+    chooseFromQuery("SELECT * FROM prj.PrzedmiotBezProw;", "Wybierz przedmiot:", 1);
     
     if(DATA::current_choice > 0)
     {
@@ -233,7 +232,11 @@ void formInputProwadzacy()
         auto ID = (DATA::qresult[DATA::current_choice-1]["id_przedmiot"]).as<int>();
         ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values ("
             << ID << ", "
-            << "(SELECT help.id_prowadzacy FROM (SELECT id_prowadzacy, row_number() over () FROM prj.prowadzacy ORDER BY 1 DESC LIMIT 1) AS help));";
+            << "(SELECT id_prowadzacy FROM prj.LastProwadzacy));";
+    }
+    if(DATA::query_failed || !DATA::is_conn)
+    {
+        ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
 
     // select a faculty from the dropdown list
@@ -243,7 +246,7 @@ void formInputProwadzacy()
     {
         auto ID = (DATA::two.qresult[DATA::two.current_choice-1]["id_wydzial"]).as<int>();
         ss << "INSERT INTO prj.wydzial_prowadzacy (id_prowadzacy, id_wydzial) values("
-            << "(SELECT help.id_prowadzacy FROM (SELECT id_prowadzacy, row_number() over () FROM prj.prowadzacy ORDER BY 1 DESC LIMIT 1) AS help), "
+            << "(SELECT id_prowadzacy FROM prj.LastProwadzacy), "
             << ID << ");";
     }
 
@@ -257,7 +260,8 @@ void formInputProwadzacy()
     {
         submitButton(str.str(), ss.str());
     }
-    if(DATA::query_failed)
+
+    if(DATA::two.query_failed || !DATA::two.is_conn)
     {
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
@@ -310,7 +314,7 @@ void formInputPrzedmiot()
     if((DATA::buf_typ != 0) && (DATA::buf_opis != 0))
     {
         ss << "INSERT INTO prj.przedmiot_informacje (id_przedmiot, typ, opis) values ("
-            << "(SELECT help.id_przedmiot FROM (SELECT id_przedmiot, row_number() over () FROM prj.przedmiot ORDER BY 1 DESC LIMIT 1) AS help)" << ", "
+            << "(SELECT id_przedmiot FROM prj.LastPrzedmiot)" << ", "
             << std::quoted(DATA::buf_typ.getBuffer(), '\'') << ", "
             << std::quoted(DATA::buf_opis.getBuffer(), '\'') << ");"; 
     }
@@ -325,20 +329,24 @@ void formInputPrzedmiot()
         ss << "INSERT INTO prj.przedmiot_kierunek (id_kierunek, skrot_nazwy, id_przedmiot) values ("
             << ID << ", "
             << "(SELECT skrot_nazwy FROM prj.kierunek WHERE id_kierunek = " << ID << "), "
-            << "(SELECT help.id_przedmiot FROM (SELECT id_przedmiot, row_number() over () FROM prj.przedmiot ORDER BY 1 DESC LIMIT 1) AS help)"
+            << "(SELECT id_przedmiot FROM prj.LastPrzedmiot)"
             << ");";
+    }
+    if(DATA::query_failed || !DATA::is_conn)
+    {
+        ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
 
     // select a free professor from the dropdown list
     std::stringstream query;
-    query << "SELECT id_prowadzacy, imie, nazwisko FROM prj.prowadzacy EXCEPT SELECT id_prowadzacy, imie, nazwisko FROM prj.prowadzacy_przedmiot JOIN prj.prowadzacy USING (id_prowadzacy);";
+    query << "SELECT * FROM prj.ProwadzacyBezPrzed;";
     chooseFromQuery(query.str(), "Dostepni prowadzacy:", 2, 2, "##submit2");
 
     if(DATA::two.current_choice > 0)
     {
         auto ID = (DATA::two.qresult[DATA::two.current_choice-1]["id_prowadzacy"]).as<int>();
         ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values("
-            << "(SELECT help.id_przedmiot FROM (SELECT id_przedmiot, row_number() over () FROM prj.przedmiot ORDER BY 1 DESC LIMIT 1) AS help), "
+            << "(SELECT id_przedmiot FROM prj.LastPrzedmiot), "
             << ID << ");";
     }
 
@@ -352,7 +360,8 @@ void formInputPrzedmiot()
     {
         submitButton(str.str(), ss.str());
     }
-    if(DATA::two.query_failed)
+
+    if(DATA::two.query_failed || !DATA::two.is_conn)
     {
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
@@ -468,7 +477,8 @@ void formInputStudent()
     {
         submitButton(str.str(), query.str());
     }
-    if(DATA::query_failed)
+    
+    if(DATA::query_failed || !DATA::is_conn)
     {
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
@@ -496,7 +506,7 @@ void formOutputKierunek()
         << " password=" << DATA::buf_password;
 
     tryConnect(str.str().c_str());
-    tableFromQuery("SELECT * FROM prj.OutKierunek;", {1, 2, 3, 4, 5});
+    tableFromQuery("SELECT * FROM prj.OutKierunek;", {1, 2, 3, 4, 5, 6, 7, 8});
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -534,7 +544,7 @@ void formOutputPrzedmiot()
 
     tryConnect(str.str().c_str());
     tableFromQuery("SELECT * FROM prj.OutPrzedmiot;",
-        {1, 2, 7, 9, 3, 4, 6, 5, 8});
+        {1, 2, 7, 9, 3, 4, 6, 5});
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -553,7 +563,7 @@ void formOutputStudent()
 
     tryConnect(str.str().c_str());
     tableFromQuery("SELECT * FROM prj.OutStudent;",
-        {1, 2, 4, 5, 6, 7, 8, 9, 12, 10, 11});
+        {1, 4, 2, 5, 6, 8, 12, 10, 11});
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
