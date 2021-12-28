@@ -169,7 +169,7 @@ void formInputKierunek()
         if(DATA::current_choice > 0)
         {
             // need to find ID of an item in a databse, not its position in the result table
-            auto ID = (DATA::qresult[DATA::current_choice-1]["id_wydzial"]).as<int>();
+            auto ID = (DATA::qresult[DATA::current_choice-1]["id"]).as<int>();
             ss << "INSERT INTO prj.wydzial_kierunek (id_wydzial, id_kierunek, skrot_nazwy) values ("
                 << ID << ", "
                 << "(SELECT id_kierunek FROM prj.LastKierunek), "
@@ -344,7 +344,7 @@ void formInputPrzedmiot()
 
     if(DATA::two.current_choice > 0)
     {
-        auto ID = (DATA::two.qresult[DATA::two.current_choice-1]["id_prowadzacy"]).as<int>();
+        auto ID = (DATA::two.qresult[DATA::two.current_choice-1]["id"]).as<int>();
         ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values("
             << "(SELECT id_przedmiot FROM prj.LastPrzedmiot), "
             << ID << ");";
@@ -592,22 +592,45 @@ void formRegisterStudentPrzedmiot()
     ImGui::TextColored(sf::Color{230, 230, 140}, "REJESTRACJA NA PRZEDMIOTY OBIERALNE");
     ImGui::NewLine();
 
-    InputBuffer<32> buf_nazwisko;
-    InputBuffer<64> buf_email;
-
     auto flags = ImGuiInputTextFlags_CharsNoBlank;
 
-    ImGui::InputTextWithHint("##breg_stpr_nazwisko", "Nazwisko", buf_nazwisko, buf_nazwisko.size(), flags);
-    ImGui::SameLine(); ImGui::Text("varchar(32)");
+    ImGui::InputTextWithHint("##breg_stpr_nazwisko", "Numer albumu", DATA::buf_id, DATA::buf_id.size(), flags | ImGuiInputTextFlags_CharsDecimal);
+    ImGui::SameLine(); ImGui::Text("varchar(8)");
 
-    ImGui::InputTextWithHint("##breg_stpr_email", "Email", buf_email, buf_email.size(), flags);
+    ImGui::InputTextWithHint("##breg_stpr_email", "Email", DATA::buf_email, DATA::buf_email.size(), flags);
     ImGui::SameLine(); ImGui::Text("varchar(64)");
 
-    // TODO: 
-    // - Request do bazy po liste przedmiotow obieralnych
-    // - Wyswietlenie listy przedmiotow
-    // - Dodawanie przedmiotow do *jakiegos* bufora
-    // - Listowanie wybranych przedmiotow ponizej
-    // - Dodanie pozycji za kazdy wybrany przedmiot
-    // + Sprawdzenie, czy zgadza sie liczba ECTS
+    std::stringstream str, ss;
+    str << "host=" << DATA::buf_host
+        << " dbname=" << DATA::buf_dbname
+        << " user=" << DATA::buf_user
+        << " port=" << DATA::buf_port
+        << " password=" << DATA::buf_password;
+
+    tryConnect(str.str().c_str());
+    chooseFromQuery("SELECT id, nazwa, egzamin FROM prj.OutPrzedObieralne;", "Wybierz przedmiot obieralny:", 1);
+
+    if(DATA::current_choice > 0)
+    {
+        // need to find ID of an item in a databse, not its position in the result table
+        auto ID = (DATA::qresult[DATA::current_choice-1]["id"]).as<int>();
+        ss << "INSERT INTO prj.student_przedmiot (id_przedmiot, nr_albumu, srednia_ocen) values ("
+            << ID << ", "
+            << DATA::buf_id.toInt() << ", "
+            << 0 << ");";
+    }
+
+    auto filled = (DATA::buf_id != 0)
+        && (DATA::buf_email.length() != 0)
+        && (DATA::current_choice > 0);
+
+    if(filled)
+    {
+        submitButton(str.str(), ss.str());
+    }
+    
+    if(DATA::query_failed || !DATA::is_conn)
+    {
+        ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
+    }
 }
