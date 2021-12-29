@@ -62,7 +62,7 @@ if(CMAKE_BUILD_TYPE MATCHES Release
 AND CMAKE_COMPILER_IS_GNUCXX
 AND CMAKE_HOST_WIN32)
     target_link_options(${EXECUTABLE_NAME}
-        PRIVATE "-Wl, -subsystem, windows")
+        PRIVATE "-Wl,-subsystem,windows")
 endif()
 
 if(CMAKE_HOST_WIN32)
