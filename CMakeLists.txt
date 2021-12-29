@@ -54,19 +54,32 @@ target_include_directories(${EXECUTABLE_NAME}
     PRIVATE
         "${PROJECT_SOURCE_DIR}/include")
 
+if(CMAKE_HOST_WIN32)
+    target_link_options(${EXECUTABLE_NAME}
+        PRIVATE
+            "-static"
+            "-Wl,-Bdynamic"
+            "-lopengl32"
+            "-lcomdlg32"
+            "-lole32"
+            "-Wl,-Bstatic")
+elseif(CMAKE_HOST_UNIX)
+    target_link_libraries(${EXECUTABLE_NAME}
+        PRIVATE
+            GL
+            pq)
+else()
+    message(STATUS "Unknown system")
+endif()
+
 target_link_libraries(${EXECUTABLE_NAME}
     PRIVATE sfml-system
             sfml-window
             sfml-graphics
             IMGUI
             ImGui-SFML
+            pthread
             pqxx)
-
-target_link_options(${EXECUTABLE_NAME}
-    PRIVATE
-        "-static-libstdc++"
-        "-static-libgcc"
-)
 
 if(CMAKE_BUILD_TYPE MATCHES Release
 AND CMAKE_COMPILER_IS_GNUCXX
@@ -74,19 +87,4 @@ AND CMAKE_HOST_WIN32)
     target_link_options(${EXECUTABLE_NAME}
         PRIVATE
             "-Wl,-subsystem,windows")
-endif()
-
-if(CMAKE_HOST_WIN32)
-    target_link_libraries(${EXECUTABLE_NAME}
-    PRIVATE
-        opengl32
-        comdlg32
-        ole32)
-elseif(CMAKE_HOST_UNIX)
-    target_link_libraries(${EXECUTABLE_NAME}
-    PRIVATE 
-        GL
-        pq)
-else()
-    message(STATUS "Unknown system")
 endif()
