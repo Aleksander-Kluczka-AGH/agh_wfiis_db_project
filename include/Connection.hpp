@@ -2,20 +2,72 @@
 
 #include "DataManager.hpp"
 
+/**
+ * @brief Try to connect to the PostgreSQL database
+ * 
+ * @param connection_string The string used to connect to the host
+ * @param count The number of retries in case the connection was not established
+ */
 static void tryConnect(const char* connection_string, const std::size_t count = 3);
+
+/**
+ * @brief Send the @c query to the database
+ * 
+ * @param query The SQL query sent to the database
+ * @param qrid The query ID, used to differentiate multiple queries in single section
+ */
 static void sendQuery(const std::string& query, const std::size_t& qrid = 1);
+
+/**
+ * @brief Reset the current connection
+ * 
+ * If the connection was already reset, this function does nothing.
+ */
 static void resetConnection();
+
+/**
+ * @brief Select the answer from dropdown list of @c query results
+ * 
+ * @param query The SQL query sent to the database
+ * @param init_label The label initially set for the dropdown header
+ * @param column_label The result's column number which content is to be displayed after selecting the answer
+ * @param qrid The query ID, used to differentiate multiple queries in single section
+ * @param unique_id The unique ID needed to satisfy the brokeness of ImGui
+ */
 static void chooseFromQuery(const std::string& query, const std::string& init_label = "Wybierz", const std::size_t& column_label = 0, const std::size_t& qrid = 1, const std::string& unique_id = "##Submit");
+
+/**
+ * @brief Draw dropdown list from global result vector
+ * 
+ * @param column_label The result's column number which content is to be displayed after selecting the answer
+ * @param qrid The query ID, used to differentiate multiple queries in single section
+ * @param unique_id The unique ID needed to satisfy the brokeness of ImGui
+ */
 static void comboFromQuery(const std::size_t& column_label, const std::size_t& qrid = 1, const std::string& unique_id = "##Submit");
+
+/**
+ * @brief Submit the @c query to the PostgreSQL database
+ * 
+ * @param connection The string used to connect to the host in case the conenction was not established
+ * @param query The SQL query sent to the database
+ */
 static void submitButton(const std::string& connection, const std::string& query);
+
+/**
+ * @brief Draw table with @c query results
+ * 
+ * @param query The SQL query sent to the database
+ * @param columns The list of columns from @c query which are to be displayed in the table
+ */
 static void tableFromQuery(const std::string& query, const std::vector<std::size_t>& columns);
 
-// this shit below is the only signature that works, it has to be static and has to be defined here
-// why? I have no clue whatsoever
-// otherwise the connection is not established correctly >:(
+
 [[maybe_unused]]
 static void tryConnect(const char* connection_string, const std::size_t count)
 {
+    // this shit below is the only signature that works, it has to be static and has to be defined here
+    // why? I have no clue whatsoever
+    // otherwise the connection is not established correctly >:(
     if(!DATA::one.is_conn && DATA::tries < count)
     {
         try
