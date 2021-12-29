@@ -39,5 +39,5 @@ class Section
     operator bool() const;
 
     private:
-    bool m_flag; // Is the Section going to be destroyed?
+    bool m_flag; /**< Is the Section going to be destroyed? */
 };

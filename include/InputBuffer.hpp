@@ -145,8 +145,8 @@ class InputBuffer
     std::string toString() const;
 
     private:
-    const std::size_t m_size; // The total size of the buffer
-    char m_buffer[SIZE]; // The buffer
+    const std::size_t m_size; /**< The total size of the buffer */
+    char m_buffer[SIZE]; /**< The buffer */
 };
 
 #include "../src/InputBuffer.inl"

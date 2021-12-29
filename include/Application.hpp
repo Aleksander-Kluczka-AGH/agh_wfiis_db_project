@@ -50,14 +50,14 @@ class Application final
     void render();
 
     public:
-    sf::Vector2f size; // The size of the window
+    sf::Vector2f size; /**< The size of the window */
 
     private:
-    sf::RenderWindow m_window; // The window target for rendering
-    sf::Clock m_clock; // The clock object handling window refresh
-    sf::Event m_event; // The event handler
+    sf::RenderWindow m_window; /**< The window target for rendering */
+    sf::Clock m_clock; /**< The clock object handling window refresh */
+    sf::Event m_event; /**< The event handler */
 
-    int m_activeSection; // Flag representing currently active section of the app
+    int m_activeSection; /**< Flag representing currently active section of the app */
 
     /**
      * @brief The enum listing all application sections
