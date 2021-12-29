@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
-set(EXECUTABLE_NAME "main")
+set(EXECUTABLE_NAME "DB_GUI_Kluczka")
 project(DB_PROJECT)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/bin")
@@ -57,6 +57,11 @@ target_link_libraries(${EXECUTABLE_NAME}
             IMGUI
             ImGui-SFML
             pqxx)
+
+if(CMAKE_BUILD_TYPE MATCHES Release
+AND CMAKE_COMPILER_IS_GNUCXX)
+    target_link_options(${EXECUTABLE_NAME} PRIVATE -mwindows)
+endif()
 
 if(CMAKE_HOST_WIN32)
     target_link_libraries(${EXECUTABLE_NAME}

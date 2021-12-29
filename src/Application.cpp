@@ -9,6 +9,7 @@ m_activeSection(0)
     m_window.create(vmode, sf::String(title.data()));
     m_window.setFramerateLimit(frame_limit);
     ImGui::SFML::Init(m_window);
+    ImGui::GetIO().IniFilename = nullptr;
 }
 
 Application::~Application()
