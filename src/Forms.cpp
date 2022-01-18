@@ -210,7 +210,7 @@ void formInputKierunek()
         if(DATA::current_choice > 0)
         {
             // need to find ID of an item in a databse, not its position in the result table
-            auto ID = (DATA::qresult[DATA::current_choice-1]["id"]).as<int>();
+            auto ID = (DATA::qresult[DATA::current_choice-1]["id_wydzial"]).as<int>();
             ss << "INSERT INTO prj.wydzial_kierunek (id_wydzial, id_kierunek, skrot_nazwy) values ("
                 << ID << ", "
                 << "(SELECT id_kierunek FROM prj.LastKierunek), "
@@ -344,20 +344,26 @@ void formInputPrzedmiot()
         << " password=" << DATA::buf_password;
 
     std::stringstream ss;
-    ss << "INSERT INTO prj.przedmiot (nazwa, semestr, liczba_ects, miejsca, egzamin) values ("
-        << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ", "
-        << DATA::buf_semestr.toInt() << ", "
-        << DATA::buf_ects.toInt() << ", "
-        << DATA::buf_miejsca.toInt() << ", "
-        << (DATA::buf_egzamin ? "true" : "false") << ");";
-
-    // if both subject type and description are filled in, insert them to the database
-    if((DATA::buf_typ != 0) && (DATA::buf_opis != 0))
+    if(DATA::buf_opis.length() != 0)
     {
-        ss << "INSERT INTO prj.przedmiot_informacje (id_przedmiot, typ, opis) values ("
-            << "(SELECT id_przedmiot FROM prj.LastPrzedmiot)" << ", "
+        ss << "INSERT INTO prj.przedmiot (nazwa, semestr, liczba_ects, miejsca, egzamin, typ, opis) values ("
+            << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ", "
+            << DATA::buf_semestr.toInt() << ", "
+            << DATA::buf_ects.toInt() << ", "
+            << DATA::buf_miejsca.toInt() << ", "
+            << (DATA::buf_egzamin ? "true" : "false") << ", "
             << std::quoted(DATA::buf_typ.getBuffer(), '\'') << ", "
-            << std::quoted(DATA::buf_opis.getBuffer(), '\'') << ");"; 
+            << std::quoted(DATA::buf_opis.getBuffer(), '\'') << ");";
+    }
+    else
+    {
+        ss << "INSERT INTO prj.przedmiot (nazwa, semestr, liczba_ects, miejsca, egzamin, typ) values ("
+            << std::quoted(DATA::buf_nazwa.getBuffer(), '\'') << ", "
+            << DATA::buf_semestr.toInt() << ", "
+            << DATA::buf_ects.toInt() << ", "
+            << DATA::buf_miejsca.toInt() << ", "
+            << (DATA::buf_egzamin ? "true" : "false") << ", "
+            << std::quoted(DATA::buf_typ.getBuffer(), '\'') << ");";
     }
 
     // select a field from the dropdown list
@@ -385,7 +391,7 @@ void formInputPrzedmiot()
 
     if(DATA::two.current_choice > 0)
     {
-        auto ID = (DATA::two.qresult[DATA::two.current_choice-1]["id"]).as<int>();
+        auto ID = (DATA::two.qresult[DATA::two.current_choice-1]["id_prowadzacy"]).as<int>();
         ss << "INSERT INTO prj.prowadzacy_przedmiot (id_przedmiot, id_prowadzacy) values("
             << "(SELECT id_przedmiot FROM prj.LastPrzedmiot), "
             << ID << ");";
@@ -504,7 +510,7 @@ void formInputStudent()
             << "(SELECT skrot_nazwy FROM prj.kierunek WHERE id_kierunek = " << ID << "), "
             << DATA::buf_id.toInt() << ", "
             << "(SELECT TO_DATE(CURRENT_TIMESTAMP::VARCHAR, 'YYYY-MM-DD')), "
-            << "TO_DATE('2077-5-22', 'YYYY-MM-DD'));";
+            << "TO_DATE('2000-01-01', 'YYYY-MM-DD'));";
     }
     // SELECT TO_DATE(CURRENT_TIMESTAMP::VARCHAR, 'YYYY-MM-DD');  // get current date
 
