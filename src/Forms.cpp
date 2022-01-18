@@ -617,7 +617,7 @@ void formOutputStudent()
 
 void formOutputWydzial()
 {
-    ImGui::TextColored(sf::Color{230, 230, 140}, "LISTA STUDENTOW");
+    ImGui::TextColored(sf::Color{230, 230, 140}, "LISTA WYDZIALOW");
     ImGui::NewLine();
 
     std::stringstream str;
