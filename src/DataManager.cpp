@@ -24,6 +24,11 @@ namespace hidden
     }
 }
 
+namespace ROOT
+{ // DONT TOUCH THIS STUFF
+    bool success_at_first_try = false;
+}
+
 namespace DATA
 {
     InputBuffer<128> buf_host = "localhost";

@@ -39,10 +39,12 @@ void formConnection()
     if(DATA::is_conn)
     {
         ImGui::TextColored(sf::Color::Green, "CONNECTION SUCCESSFULL");
+        ROOT::success_at_first_try = true;
     }
     else if(DATA::requested_results)
     {
         ImGui::TextColored(sf::Color::Red, "CONNECTION FAILED: %s", DATA::exception_message.c_str());
+        ROOT::success_at_first_try = false;
     }
 }
 
@@ -264,8 +266,13 @@ void formInputProwadzacy()
         << std::quoted(DATA::buf_email.getBuffer(), '\'') << ");";
 
     // select a free subject from the dropdown list
-    tryConnect(str.str().c_str());
-    chooseFromQuery("SELECT * FROM prj.PrzedmiotBezProw;", "Wybierz przedmiot:", 1);
+    if(ROOT::success_at_first_try)
+    {
+        tryConnect(str.str().c_str());
+        chooseFromQuery("SELECT * FROM prj.PrzedmiotBezProw;", "Wybierz przedmiot:", 1);
+    }
+    
+    
     
     if(DATA::current_choice > 0)
     {
@@ -279,9 +286,12 @@ void formInputProwadzacy()
     {
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
-
-    // select a faculty from the dropdown list
-    chooseFromQuery("SELECT id_wydzial, nazwa, skrot_nazwy FROM prj.wydzial;", "Dostepne wydzialy:", 2, 2, "##submit2");
+    
+    if(ROOT::success_at_first_try)
+    {
+        // select a faculty from the dropdown list
+        chooseFromQuery("SELECT id_wydzial, nazwa, skrot_nazwy FROM prj.wydzial;", "Dostepne wydzialy:", 2, 2, "##submit2");
+    }
     
     if(DATA::two.current_choice > 0)
     {
@@ -366,9 +376,12 @@ void formInputPrzedmiot()
             << std::quoted(DATA::buf_typ.getBuffer(), '\'') << ");";
     }
 
-    // select a field from the dropdown list
-    tryConnect(str.str().c_str());
-    chooseFromQuery("SELECT id_kierunek, nazwa, stopien FROM prj.kierunek ORDER BY 1;", "Wybierz kierunek:", 1);
+    if(ROOT::success_at_first_try)
+    {
+        // select a field from the dropdown list
+        tryConnect(str.str().c_str());
+        chooseFromQuery("SELECT id_kierunek, nazwa, stopien FROM prj.kierunek ORDER BY 1;", "Wybierz kierunek:", 1);
+    }
 
     if(DATA::current_choice > 0)
     {
@@ -384,10 +397,13 @@ void formInputPrzedmiot()
         ImGui::TextColored(sf::Color::Red, "%s", DATA::exception_message.c_str());
     }
 
-    // select a free professor from the dropdown list
-    std::stringstream query;
-    query << "SELECT * FROM prj.ProwadzacyBezPrzed;";
-    chooseFromQuery(query.str(), "Dostepni prowadzacy:", 2, 2, "##submit2");
+    if(ROOT::success_at_first_try)
+    {
+        // select a free professor from the dropdown list
+        std::stringstream query;
+        query << "SELECT * FROM prj.ProwadzacyBezPrzed;";
+        chooseFromQuery(query.str(), "Dostepni prowadzacy:", 2, 2, "##submit2");
+    }
 
     if(DATA::two.current_choice > 0)
     {
@@ -552,8 +568,11 @@ void formOutputKierunek()
         << " port=" << DATA::buf_port
         << " password=" << DATA::buf_password;
 
-    tryConnect(str.str().c_str());
-    tableFromQuery("SELECT * FROM prj.OutKierunek;", {1, 2, 3, 4, 5, 6, 7, 8});
+    if(ROOT::success_at_first_try)
+    {
+        tryConnect(str.str().c_str());
+        tableFromQuery("SELECT * FROM prj.OutKierunek;", {1, 2, 3, 4, 5, 6, 7, 8});
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -570,9 +589,11 @@ void formOutputProwadzacy()
         << " port=" << DATA::buf_port
         << " password=" << DATA::buf_password;
 
-    tryConnect(str.str().c_str());
-    tableFromQuery("SELECT * FROM prj.OutProwadzacy;",
-        {1, 2, 4, 5, 6, 7});
+    if(ROOT::success_at_first_try)
+    {
+        tryConnect(str.str().c_str());
+        tableFromQuery("SELECT * FROM prj.OutProwadzacy;", {1, 2, 4, 5, 6, 7});
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -589,9 +610,11 @@ void formOutputPrzedmiot()
         << " port=" << DATA::buf_port
         << " password=" << DATA::buf_password;
 
-    tryConnect(str.str().c_str());
-    tableFromQuery("SELECT * FROM prj.OutPrzedmiot;",
-        {1, 2, 7, 9, 3, 4, 6, 5});
+    if(ROOT::success_at_first_try)
+    {
+        tryConnect(str.str().c_str());
+        tableFromQuery("SELECT * FROM prj.OutPrzedmiot;", {1, 2, 7, 9, 3, 4, 6, 5});
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -607,10 +630,12 @@ void formOutputStudent()
         << " user=" << DATA::buf_user
         << " port=" << DATA::buf_port
         << " password=" << DATA::buf_password;
-
-    tryConnect(str.str().c_str());
-    tableFromQuery("SELECT * FROM prj.OutStudent;",
-        {1, 4, 2, 5, 6, 8, 12, 10, 11});
+    
+    if(ROOT::success_at_first_try)
+    {
+        tryConnect(str.str().c_str());
+        tableFromQuery("SELECT * FROM prj.OutStudent;", {1, 4, 2, 5, 6, 8, 12, 10, 11});
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -626,10 +651,12 @@ void formOutputWydzial()
         << " user=" << DATA::buf_user
         << " port=" << DATA::buf_port
         << " password=" << DATA::buf_password;
-
-    tryConnect(str.str().c_str());
-    tableFromQuery("SELECT * FROM prj.OutWydzial;",
-        {1, 2, 3, 4, 5});
+    
+    if(ROOT::success_at_first_try)
+    {
+        tryConnect(str.str().c_str());
+        tableFromQuery("SELECT * FROM prj.OutWydzial;", {1, 2, 3, 4, 5});
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -653,10 +680,13 @@ void formRegisterStudentPrzedmiot()
         << " user=" << DATA::buf_user
         << " port=" << DATA::buf_port
         << " password=" << DATA::buf_password;
-
-    tryConnect(str.str().c_str());
-    chooseFromQuery("SELECT id, nazwa, egzamin FROM prj.OutPrzedObieralne;", "Wybierz przedmiot obieralny:", 1);
-
+    
+    if(ROOT::success_at_first_try)
+    {
+        tryConnect(str.str().c_str());
+        chooseFromQuery("SELECT id, nazwa, egzamin FROM prj.OutPrzedObieralne;", "Wybierz przedmiot obieralny:", 1);
+    }
+    
     if(DATA::current_choice > 0)
     {
         // need to find ID of an item in a databse, not its position in the result table

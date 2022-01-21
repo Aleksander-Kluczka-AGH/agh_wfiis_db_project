@@ -2,6 +2,8 @@
 
 #include "DataManager.hpp"
 
+static bool root_check_connection(const char* connection_string);
+
 /**
  * @brief Try to connect to the PostgreSQL database
  * 
@@ -61,6 +63,19 @@ static void submitButton(const std::string& connection, const std::string& query
  */
 static void tableFromQuery(const std::string& query, const std::vector<std::size_t>& columns);
 
+[[maybe_unused]]
+[[nodiscard]]
+static bool root_check_connection(const char* connection_string)
+{
+    try
+    {
+        DATA::connection = std::make_unique<pqxx::connection>(connection_string);
+        auto result = DATA::connection->is_open();
+        DATA::connection.reset(nullptr);
+        return result;
+    }
+    catch(const std::exception& e) { return false; }
+}
 
 [[maybe_unused]]
 static void tryConnect(const char* connection_string, const std::size_t count)

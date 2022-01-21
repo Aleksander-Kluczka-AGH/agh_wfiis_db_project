@@ -10,6 +10,14 @@ m_activeSection(0)
     m_window.setFramerateLimit(frame_limit);
     ImGui::SFML::Init(m_window);
     ImGui::GetIO().IniFilename = nullptr;
+
+    std::stringstream str;
+    str << "host=" << DATA::buf_host
+        << " dbname=" << DATA::buf_dbname
+        << " user=" << DATA::buf_user
+        << " port=" << DATA::buf_port
+        << " password=" << DATA::buf_password;
+    ROOT::success_at_first_try = root_check_connection(str.str().c_str());
 }
 
 Application::~Application()

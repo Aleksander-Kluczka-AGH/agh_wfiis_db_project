@@ -39,6 +39,12 @@ namespace hidden
     };
 }
 
+namespace ROOT
+{ // DONT TOUCH THIS STUFF
+    extern bool success_at_first_try;
+}
+
+
 namespace DATA
 {
     extern InputBuffer<128> buf_host; /**< The buffer for a host string */
